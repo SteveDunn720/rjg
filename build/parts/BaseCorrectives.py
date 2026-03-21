@@ -1661,6 +1661,521 @@ def Build_Correctives(side='L'):
             **data
         )
 
+def Build_Mid_Correctives(side='M'):
+    rig_module = rModule.RigModule(side=side, part="correctives")
+    SideShort = 'M'
+    SideLong = 'Middle'
+        
+
+    if mc.objExists('CorrectiveRigParts'):
+        cor_root = 'CorrectiveRigParts'
+    else:
+        cor_root = mc.group(empty=True, name='CorrectiveRigParts')
+        mc.parent(cor_root, 'RIG')
+        mc.addAttr(cor_root, longName='Comp_Vis', at='bool', k=True)
+        mc.addAttr("Muscle_Global_M_CTRL", longName='Corrective_rig_Vis', proxy=f'{cor_root}.Comp_Vis')
+
+    pop_corrective_dict = {
+        f"Spine01_Front_01": {
+            "pop_root" : f'spine_M_01_JNT',
+            "par_jnt" : 'spine_M_01_JNT',
+            "pop_descriptor" : f'Spine01_Front',
+            "tgt_limb" : f'spine_M_01_JNT',
+            "blend_par" : [],
+            "pop_mult" : .3, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : 0,
+            "tgt_influence": -.1
+            },
+
+        f"Spine01_Back_01": {
+            "pop_root" : f'spine_M_01_JNT',
+            "par_jnt" : 'spine_M_01_JNT',
+            "pop_descriptor" : f'Spine01_Back',
+            "tgt_limb" : f'spine_M_01_JNT',
+            "blend_par" : [],
+            "pop_mult" : .2, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 30,
+            "downClamp" : -180,
+            "tgt_influence": -.2
+            },
+
+        f"Spine01_Left_01": {
+            "pop_root" : f'spine_M_01_JNT',
+            "par_jnt" : 'spine_M_01_JNT',
+            "pop_descriptor" : f'Spine01_Left',
+            "tgt_limb" : f'spine_M_01_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 5,
+            "downClamp" : -180,
+            "tgt_influence": .4
+            },
+            
+        f"Spine01_Right_01": {
+            "pop_root" : f'spine_M_01_JNT',
+            "par_jnt" : 'spine_M_01_JNT',
+            "pop_descriptor" : f'Spine01_Right',
+            "tgt_limb" : f'spine_M_01_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : -5,
+            "tgt_influence": .4
+            },
+
+        f"Spine02_Front_02": {
+            "pop_root" : f'spine_M_02_JNT',
+            "par_jnt" : 'spine_M_02_JNT',
+            "pop_descriptor" : f'Spine02_Front',
+            "tgt_limb" : f'spine_M_02_JNT',
+            "blend_par" : [],
+            "pop_mult" : .3, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : 0,
+            "tgt_influence": -.1
+            },
+
+        f"Spine02_Back_02": {
+            "pop_root" : f'spine_M_02_JNT',
+            "par_jnt" : 'spine_M_02_JNT',
+            "pop_descriptor" : f'Spine02_Back',
+            "tgt_limb" : f'spine_M_02_JNT',
+            "blend_par" : [],
+            "pop_mult" : .2, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 30,
+            "downClamp" : -180,
+            "tgt_influence": -.2
+            },
+
+        f"Spine02_Left_02": {
+            "pop_root" : f'spine_M_02_JNT',
+            "par_jnt" : 'spine_M_02_JNT',
+            "pop_descriptor" : f'Spine02_Left',
+            "tgt_limb" : f'spine_M_02_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 5,
+            "downClamp" : -180,
+            "tgt_influence": .4
+            },
+            
+        f"Spine02_Right_02": {
+            "pop_root" : f'spine_M_02_JNT',
+            "par_jnt" : 'spine_M_02_JNT',
+            "pop_descriptor" : f'Spine02_Right',
+            "tgt_limb" : f'spine_M_02_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : -5,
+            "tgt_influence": .4
+            },
+
+        f"Spine03_Front_03": {
+            "pop_root" : f'spine_M_03_JNT',
+            "par_jnt" : 'spine_M_03_JNT',
+            "pop_descriptor" : f'Spine03_Front',
+            "tgt_limb" : f'spine_M_03_JNT',
+            "blend_par" : [],
+            "pop_mult" : .3, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : 0,
+            "tgt_influence": -.1
+            },
+
+        f"Spine03_Back_03": {
+            "pop_root" : f'spine_M_03_JNT',
+            "par_jnt" : 'spine_M_03_JNT',
+            "pop_descriptor" : f'Spine03_Back',
+            "tgt_limb" : f'spine_M_03_JNT',
+            "blend_par" : [],
+            "pop_mult" : .2, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 30,
+            "downClamp" : -180,
+            "tgt_influence": -.2
+            },
+
+        f"Spine03_Left_03": {
+            "pop_root" : f'spine_M_03_JNT',
+            "par_jnt" : 'spine_M_03_JNT',
+            "pop_descriptor" : f'Spine03_Left',
+            "tgt_limb" : f'spine_M_03_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 5,
+            "downClamp" : -180,
+            "tgt_influence": .4
+            },
+
+        f"Spine03_Right_03": {
+            "pop_root" : f'spine_M_03_JNT',
+            "par_jnt" : 'spine_M_03_JNT',
+            "pop_descriptor" : f'Spine03_Right',
+            "tgt_limb" : f'spine_M_03_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : -5,
+            "tgt_influence": .4
+            },
+            
+        f"Spine04_Front_04": {
+            "pop_root" : f'spine_M_04_JNT',
+            "par_jnt" : 'spine_M_04_JNT',
+            "pop_descriptor" : f'Spine04_Front',
+            "tgt_limb" : f'spine_M_04_JNT',
+            "blend_par" : [],
+            "pop_mult" : .3, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : 0,
+            "tgt_influence": -.1
+            },
+
+        f"Spine04_Back_04": {
+            "pop_root" : f'spine_M_04_JNT',
+            "par_jnt" : 'spine_M_04_JNT',
+            "pop_descriptor" : f'Spine04_Back',
+            "tgt_limb" : f'spine_M_04_JNT',
+            "blend_par" : [],
+            "pop_mult" : .2, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 30,
+            "downClamp" : -180,
+            "tgt_influence": -.2
+            },
+
+        f"Spine04_Left_04": {
+            "pop_root" : f'spine_M_04_JNT',
+            "par_jnt" : 'spine_M_04_JNT',
+            "pop_descriptor" : f'Spine04_Left',
+            "tgt_limb" : f'spine_M_04_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 5,
+            "downClamp" : -180,
+            "tgt_influence": .4
+            },
+
+        f"Spine04_Right_04": {
+            "pop_root" : f'spine_M_04_JNT',
+            "par_jnt" : 'spine_M_04_JNT',
+            "pop_descriptor" : f'Spine04_Right',
+            "tgt_limb" : f'spine_M_04_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : -5,
+            "tgt_influence": .4
+            },
+            
+        f"Spine05_Front_05": {
+            "pop_root" : f'spine_M_05_JNT',
+            "par_jnt" : 'spine_M_05_JNT',
+            "pop_descriptor" : f'Spine05_Front',
+            "tgt_limb" : f'spine_M_05_JNT',
+            "blend_par" : [],
+            "pop_mult" : .3, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : 0,
+            "tgt_influence": -.1
+            },
+
+        f"Spine05_Back_05": {
+            "pop_root" : f'spine_M_05_JNT',
+            "par_jnt" : 'spine_M_05_JNT',
+            "pop_descriptor" : f'Spine05_Back',
+            "tgt_limb" : f'spine_M_05_JNT',
+            "blend_par" : [],
+            "pop_mult" : .2, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 30,
+            "downClamp" : -180,
+            "tgt_influence": -.2
+            },
+
+        f"Spine05_Left_05": {
+            "pop_root" : f'spine_M_05_JNT',
+            "par_jnt" : 'spine_M_05_JNT',
+            "pop_descriptor" : f'Spine05_Left',
+            "tgt_limb" : f'spine_M_05_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 5,
+            "downClamp" : -180,
+            "tgt_influence": .4
+            },
+
+        f"Spine05_Right_05": {
+            "pop_root" : f'spine_M_05_JNT',
+            "par_jnt" : 'spine_M_05_JNT',
+            "pop_descriptor" : f'Spine05_Right',
+            "tgt_limb" : f'spine_M_05_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : -5,
+            "tgt_influence": .4
+            },
+            
+        f"neck01_Front_01": {
+            "pop_root" : f'neck_M_01_JNT',
+            "par_jnt" : 'neck_M_01_JNT',
+            "pop_descriptor" : f'neck01_Front',
+            "tgt_limb" : f'neck_M_01_JNT',
+            "blend_par" : [],
+            "pop_mult" : .3, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : 0,
+            "tgt_influence": -.1
+            },
+
+        f"neck03_Back_01": {
+            "pop_root" : f'neck_M_01_JNT',
+            "par_jnt" : 'neck_M_01_JNT',
+            "pop_descriptor" : f'neck01_Back',
+            "tgt_limb" : f'neck_M_01_JNT',
+            "blend_par" : [],
+            "pop_mult" : .2, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 30,
+            "downClamp" : -180,
+            "tgt_influence": -.2
+            },
+
+        f"neck01_Left_01": {
+            "pop_root" : f'neck_M_01_JNT',
+            "par_jnt" : 'neck_M_01_JNT',
+            "pop_descriptor" : f'neck01_Left',
+            "tgt_limb" : f'neck_M_01_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 5,
+            "downClamp" : -180,
+            "tgt_influence": .4
+            },
+
+        f"neck01_Right_01": {
+            "pop_root" : f'neck_M_01_JNT',
+            "par_jnt" : 'neck_M_01_JNT',
+            "pop_descriptor" : f'neck01_Right',
+            "tgt_limb" : f'neck_M_01_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : -5,
+            "tgt_influence": .4
+            },
+            
+        f"neck02_Front_02": {
+            "pop_root" : f'neck_M_02_JNT',
+            "par_jnt" : 'neck_M_02_JNT',
+            "pop_descriptor" : f'neck02_Front',
+            "tgt_limb" : f'neck_M_02_JNT',
+            "blend_par" : [],
+            "pop_mult" : .3, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : 0,
+            "tgt_influence": -.1
+            },
+
+        f"neck03_Back_02": {
+            "pop_root" : f'neck_M_02_JNT',
+            "par_jnt" : 'neck_M_02_JNT',
+            "pop_descriptor" : f'neck02_Back',
+            "tgt_limb" : f'neck_M_02_JNT',
+            "blend_par" : [],
+            "pop_mult" : .2, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 30,
+            "downClamp" : -180,
+            "tgt_influence": -.2
+            },
+
+        f"neck02_Left_02": {
+            "pop_root" : f'neck_M_02_JNT',
+            "par_jnt" : 'neck_M_02_JNT',
+            "pop_descriptor" : f'neck02_Left',
+            "tgt_limb" : f'neck_M_02_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 5,
+            "downClamp" : -180,
+            "tgt_influence": .4
+            },
+
+        f"neck02_Right_02": {
+            "pop_root" : f'neck_M_02_JNT',
+            "par_jnt" : 'neck_M_02_JNT',
+            "pop_descriptor" : f'neck02_Right',
+            "tgt_limb" : f'neck_M_02_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : -5,
+            "tgt_influence": .4
+            },
+            
+        f"neck03_Front_03": {
+            "pop_root" : f'neck_M_03_JNT',
+            "par_jnt" : 'neck_M_03_JNT',
+            "pop_descriptor" : f'neck03_Front',
+            "tgt_limb" : f'neck_M_03_JNT',
+            "blend_par" : [],
+            "pop_mult" : .3, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : 0,
+            "tgt_influence": -.1
+            },
+
+        f"neck03_Back_03": {
+            "pop_root" : f'neck_M_03_JNT',
+            "par_jnt" : 'neck_M_03_JNT',
+            "pop_descriptor" : f'neck03_Back',
+            "tgt_limb" : f'neck_M_03_JNT',
+            "blend_par" : [],
+            "pop_mult" : .2, 
+            "tgt_limb_pop" : 'X',
+            "pop" : 'Z',
+            "buildControl" : True,
+            "upClamp" : 30,
+            "downClamp" : -180,
+            "tgt_influence": -.2
+            },
+
+        f"neck03_Left_03": {
+            "pop_root" : f'neck_M_03_JNT',
+            "par_jnt" : 'neck_M_03_JNT',
+            "pop_descriptor" : f'neck03_Left',
+            "tgt_limb" : f'neck_M_03_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 5,
+            "downClamp" : -180,
+            "tgt_influence": .4
+            },
+
+        f"neck03_Right_03": {
+            "pop_root" : f'neck_M_03_JNT',
+            "par_jnt" : 'neck_M_03_JNT',
+            "pop_descriptor" : f'neck03_Right',
+            "tgt_limb" : f'neck_M_03_JNT',
+            "blend_par" : [],
+            "pop_mult" : -0.3, 
+            "tgt_limb_pop" : 'Z',
+            "pop" : 'X',
+            "buildControl" : True,
+            "upClamp" : 180,
+            "downClamp" : -5,
+            "tgt_influence": .4
+            },
+
+        
+    }
+
+    for pop_descriptor, data in pop_corrective_dict.items():
+        pop_corrective(
+            rig_module=rig_module,
+            **data
+        )
+    for joint in ['Front', 'Back', 'Right', 'Left']:
+        split_joint = f'Spine01_{joint}_JNT'
+        split_joints: list[str] = [f'Spine01_{joint}_JNT',f'Spine02_{joint}_JNT',f'Spine03_{joint}_JNT',f'Spine04_{joint}_JNT',f'Spine05_{joint}_JNT',]
+        mc.addAttr(split_joint, longName="split_joints", dataType="string")
+        mc.setAttr(f'{split_joint}.split_joints', repr(split_joints), type="string")
+        split_joint = f'neck01_{joint}_JNT'
+        split_joints: list[str] = [f'neck01_{joint}_JNT',f'neck02_{joint}_JNT',f'neck03_{joint}_JNT']
+        mc.addAttr(split_joint, longName="split_joints", dataType="string")
+        mc.setAttr(f'{split_joint}.split_joints', repr(split_joints), type="string")
+
+
+
 
 
 

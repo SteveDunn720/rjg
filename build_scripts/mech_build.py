@@ -113,6 +113,8 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         production = 'LG'
     elif character in ['Jett', 'Blitz']:
         production = 'SG'
+    elif character in []:
+        production = 'WF'
     else:
         production = None
 
@@ -163,42 +165,6 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
     )
         
 
-    neck = rBuild.build_module(module_type='autoneck', side='M', part='neck', guide_list=neckList, ctrl_scale=10, segments=3, )
-    head = rBuild.build_module(module_type='head', side='M', part='head', guide_list=['Head'], ctrl_scale=50,  autoneckik=True)
-
-    #
-    if face:
-        for side in ['L', 'R']:
-            from rjg.build.parts.UEeye import UEeye
-            eye = UEeye(f'Eye_{side}_guides', ctrl_scale=1, skin=['Eyes', 'Corneas'], split=True,)
-            eye.build()
-            from rjg.build.parts.UEbrow import UEbrow
-            brow = UEbrow(f'Brow_{side}_guides', ctrl_scale=1, split=True)
-            brow.build()
-            from rjg.build.parts.UEcheek import UEcheek
-            cheek = UEcheek(f'Cheek_{side}_guides', ctrl_scale=1, NL=True, split=True)
-            cheek.build()
-            from rjg.build.parts.UEear import UEear
-            ear = UEear(f'Ear_{side}_guides', ctrl_scale=1)
-            ear.build()
-
-        from rjg.build.parts.UEnose import UEnose
-        nose = UEnose('Nose_guides', ctrl_scale=1)
-        nose.build()
-        from rjg.build.parts.UEjaw import UEjaw
-        jaw = UEjaw('Jaw_M_guides', ctrl_scale=1, mentalis=True)
-        jaw.build()
-        from rjg.build.parts.UEmouth import UEmouth
-        mouth = UEmouth('Mouth_guides', ctrl_scale=1, Major_Mouth=4, split=True,)
-        mouth.build()
-        from rjg.build.parts.UEteeth import UEteeth
-        teeth = UEteeth('Tongue_M_guides', ctrl_scale=1, skin=['tongue', 'topteeth', 'botteeth'])
-        teeth.build()
-
-
-        from rjg.build.parts.UEfaceconnect import UEfaceconnect
-        faceconnect = UEfaceconnect('UEFace_Guides', ctrl_scale=1, custom='Normal')
-        faceconnect.build() 
 
     #Mirrored Base Rig Parts
     fing_shape = 'circle' 
@@ -263,10 +229,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         handshape = 'wrist'
             
         # Hand
-        hand: Hand = rBuild.build_module(module_type='hand', side=fs[0], part='hand', guide_list=[fs + 'Hand'], ctrl_scale=8, bendy_visibility = bendy_switch, handroll = handroll, handshape=handshape)
-        if hand.bendy_vis_attr is not None:
-            for control in [arm.fk_ctrls[-1], arm.main_ctrl]:
-                mc.addAttr(control.ctrl, longName="handBendyVisibility", proxy=hand.bendy_vis_attr)
+        hand: Hand = rBuild.build_module(module_type='hand', side=fs[0], part='hand', guide_list=[fs + 'Hand'], ctrl_scale=8, bendy_visibility = bendy_switch, handroll = handroll, handshape=handshape, expression_control=False)
         
         Fexpress = False 
 
@@ -301,74 +264,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
             mus_tgt=FootMus,
             foot_shape = footshp
         )
-        fingers = []
-        
-        ffs = ['Index', 'Middle', 'Ring', 'Pinky']
-        
-        #Fix Bobo's 3 fingered-ness
-        if character in ['Bobo', 'Sharkguy']:
-            ffs = ffs[:-1]
-        for f in ffs:
-            finger = rBuild.build_module(
-                module_type="finger",
-                side=fs[0],
-                part="finger" + f,
-                guide_list=[
-                    fs + "Hand" + f + str(num)
-                    for num in range(
-                        5
-                    )
-                ],
-                ctrl_scale=1,
-                fk_shape=fing_shape,
-                bendy=bendbo,
-                create_ik=ik_fingers,
-                bendy_vis_attr = hand.bendy_vis_attr,
-                curlaxis = curlaxis,
-                handroll = handroll,
-                curlshape = curlshape
-            )
-            fingers.append(finger)
 
-        thumb = rBuild.build_module(
-            module_type="finger",
-            side=fs[0],
-            part="fingerThumb",
-            guide_list=[
-                fs + "HandThumb" + str(num + 1) for num in range(4)
-            ],
-            ctrl_scale=1,
-            fk_shape=fing_shape,
-            bendy=bendbo,
-            create_ik=ik_fingers,
-            bendy_vis_attr = hand.bendy_vis_attr,
-            curlaxis = curlaxis,
-            metacarpal_ik = True,
-            curlshape = curlshape
-        )
-        fingers.append(thumb) 
-
-    """for toe in ['Indextoe', 'Middletoe', 'Ringtoe']:
-        toes = rBuild.build_module(module_type="MetaToe",side=side,part=toe, guide_list=[sidelong + "Foot" + toe + str(num)for num in range(5)],
-        ctrl_scale=1,
-        fk_shape='circle',
-        bendy=False,
-        create_ik=False,
-        curlaxis = 'Z',
-        handroll = False,
-        curl=True,
-        expression_control=True
-    )"""
-
-
-    for side in ['L', 'R']:
-        from rjg.build.parts.BaseCorrectives import Build_Correctives
-        Build_Correctives(side=side)
-    
-    #from rjg.build.parts.BaseCorrectives import Build_Mid_Correctives
-    #Build_Mid_Correctives(side='M')
-
-    #Clearing Guides grom the scene
     mc.delete('Guides')
     
     #Skinning Proccess Starts here
@@ -436,22 +332,6 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
     rUSD.connectUSDAttr()
 
 
-    if face:
-            for g in ['Eye_L_Eye_L_Upper_curve_ribbon', 'Eye_R_Eye_R_Lower_curve_ribbon', 'Eye_R_Eye_R_Upper_curve_ribbon', 'Eye_L_Eye_L_Lower_curve_ribbon',]: #'Mouth_LowerLip_surf',
-                import_weights(geo=g, path=f'{groups}/bobo/character/Rigs/{character}/SkinFiles')
-
-                smooth_rib.smooth_nurbs_skin("Mouth_UpperLip_surf",  strength=0.3, iterations=3)
-                smooth_rib.smooth_nurbs_skin("Mouth_LowerLip_surf",  strength=0.3, iterations=3)
-                smooth_rib.smooth_nurbs_skin("Mouth_UpperLip_surf",  strength=0.3, iterations=3)
-                smooth_rib.smooth_nurbs_skin("Mouth_LowerLip_surf",  strength=0.3, iterations=3)
-
-
-
-
-    if face == False:
-        for obj in ['Eyes', 'topteeth', 'botteeth', 'tongue','Corneas']:
-            mc.skinCluster('head_M_JNT', obj, tsb=True)
-
 
 
     try:
@@ -489,8 +369,6 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
 
     auto_split_all_weights('MODEL')
 
-    auto_apply_defaults()
-    from rjg.build_scripts.bettercontrols import apply_control_file
 
     apply_control_file(f"{groups}/bobo/character/Rigs/{character}/Controls/controls.json")
 
