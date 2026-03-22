@@ -113,7 +113,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         production = 'LG'
     elif character in ['Jett', 'Blitz']:
         production = 'SG'
-    elif character in []:
+    elif character in ['Mech']:
         production = 'WF'
     else:
         production = None
@@ -122,7 +122,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
 
 
     ### BUILD SCRIPT
-    root = rBuild.build_module(module_type='root', side='M', part='root', model_path=mp, guide_path=gp, base=production, muscle_ctrl=addmusc)
+    root = rBuild.build_module(module_type='root', side='M', part='root', model_path=mp, guide_path=gp, base=production, muscle_ctrl=False)
     if ep:
         extras = rFile.import_hierarchy(ep, parent='MODEL')[0]
     #Fun Camera Thing

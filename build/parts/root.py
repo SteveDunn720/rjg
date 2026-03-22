@@ -28,6 +28,8 @@ class Root(rModule.RigModule):
             self.global_shape = 'LG_Base'
         elif base == 'SG':
             self.gloab_shape = 'SG_Base'
+        elif base == 'WF':
+            self.gloab_shape = 'WF_Base'
         else:
             self.global_shape = 'NewGear'
 
