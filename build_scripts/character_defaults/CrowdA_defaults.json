@@ -43,6 +43,18 @@
             "rotateOrder": 0,
             "AutoMouth": -5.0,
             "AutoMouthMult": -25.0
+        },
+        "Head_M_ik_CTRL": {
+            "rotateOrder": 0,
+            "Stretchy": 0.2,
+            "roll": 0.0,
+            "twist": 0.0,
+            "FK_IK_Switch": 1.0,
+            "Rot_Legacy_Switch": true
+        },
+        "Nose_M_NoseRoot_M_CTRL": {
+            "rotateOrder": 0,
+            "LipFollow": 0.2
         }
     }
 }

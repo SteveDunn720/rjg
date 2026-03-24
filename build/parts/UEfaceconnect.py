@@ -241,7 +241,8 @@ class UEfaceconnect(UEface):
             mc.parent('Nose_Master_Master_CTRL_CNST_GRP', 'head_M_01_CTRL')
             mc.parent('Jaw_M_root_M_CTRL_CNST_GRP', 'LowerHead_M_CTRL')
             mc.parent('TopTeeth_JNT', 'BotTeeth_JNT', 'Tongue_01_JNT', 'head_M_JNT')
-            mc.parent('TopTeeth_M_CTRL_CNST_GRP', 'LowerHead_M_CTRL')
+            #mc.parent('TopTeeth_M_CTRL_CNST_GRP', 'LowerHead_M_CTRL')
+            mc.parent('UpperTeeth_M_Jaw_Offset_GRP', 'LowerHead_M_CTRL')
             mc.parent('BotTeeth_M_CTRL_CNST_GRP', 'Tongue_01_01_CTRL_CNST_GRP', 'Jaw_M_root_M_CTRL')
             if self.mastermouth:
                 mc.parentConstraint('Mouth_M_MasterControl_M_CTRL', 'TopTeeth_M_CTRL_CNST_GRP', mo=True)
@@ -273,7 +274,7 @@ class UEfaceconnect(UEface):
             for side in ['L', 'R']:
                 mc.pointConstraint('LowerLip_M_M_CTRL_CNST_GRP', f'Major_Mouth_{side}_CornerLip_Mouth_CTRL_CNST_GRP', mo=True)
                 mc.pointConstraint(loc, f'Major_Mouth_{side}_CornerLip_Mouth_CTRL_CNST_GRP', mo=True)
-                mc.pointConstraint(f'Major_Mouth_{side}_CornerLip_Mouth_CTRL', f'NLFold_{side}_{side}_CTRL_CNST_GRP', mo=True)
+                #mc.pointConstraint(f'Major_Mouth_{side}_CornerLip_Mouth_CTRL', f'NLFold_{side}_{side}_CTRL_CNST_GRP', mo=True)
                 try:
                     mc.parent(f'Ear_{side}_Root_JNT', 'head_M_JNT')
                     mc.parent(f'Ear_{side}_Root_{side}_CTRL_CNST_GRP', 'head_M_01_CTRL')
@@ -412,6 +413,7 @@ class UEfaceconnect(UEface):
             mc.setAttr(f'{jaw_rot_main_MD}.input2Y', .5)
             mc.connectAttr('Jaw_M_root_M_CTRL.rotate', f'{jaw_rot_main_MD}.input1')
             mc.connectAttr(f'{jaw_rot_main_MD}.output', 'UpperLip_M_Jaw_Offset_GRP.rotate')
+            mc.connectAttr(f'{jaw_rot_main_MD}.output', 'UpperTeeth_M_Jaw_Offset_GRP.rotate')
 
 
             jaw_rottrans_remap = mc.createNode('remapValue', name='jaw_rottrans_remap')
@@ -457,7 +459,21 @@ class UEfaceconnect(UEface):
                 mc.connectAttr('Jaw_M_root_M_CTRL.translateY', f'{jaw_down}.inputValue')
                 mc.connectAttr(f'{jaw_down}.outValue', f'{jaw_side_MD}.input2X')
 
-                mc.connectAttr(f'{jaw_side_MD}.outputX', f'Major_Mouth_{side}_CornerLip_Mouth_CTRL_SDK_GRP.translateY')
+                #mc.connectAttr(f'{jaw_side_MD}.outputX', f'Major_Mouth_{side}_CornerLip_Mouth_CTRL_SDK_GRP.translateY')
+
+                corner_up_ADL = mc.createNode('addDL', name=f'{side}_jaw_corner_up_ADL')
+
+                mc.connectAttr(f'{jaw_side_MD}.outputX', f'{corner_up_ADL}.input1')
+                mc.connectAttr(f'{corner_up_ADL}.output', f'Major_Mouth_{side}_CornerLip_Mouth_CTRL_SDK_GRP.translateY')
+
+                corner_up_remap = mc.createNode('remapValue', name=f'{side}_jaw_corner_up_remap')
+                mc.connectAttr('Jaw_M_root_M_CTRL.rotateX', f'{corner_up_remap}.inputValue')
+                mc.addAttr(f'Major_Mouth_{side}_CornerLip_Mouth_CTRL', longName='Jaw_UP_Mult', dv=1, k=True)
+                mc.connectAttr(f'Major_Mouth_{side}_CornerLip_Mouth_CTRL.Jaw_UP_Mult', f'{corner_up_remap}.outputMax')
+                mc.setAttr(f'{corner_up_remap}.inputMax', -20)
+                mc.connectAttr(f'{corner_up_remap}.outValue', f'{corner_up_ADL}.input2')
+
+                mc.parentConstraint(f'Major_Mouth_{side}_CornerLip_Mouth_CTRL', f'NLFold_{side}_{side}_CTRL_CNST_GRP', mo=True, sr=["x", "y", "z"])
 
                 mc.orientConstraint('Mouth_M_MasterControl_M_CTRL', f'NLFold_{side}_{side}_CTRL_CNST_GRP', mo=True)
                 mc.scaleConstraint('Mouth_M_MasterControl_M_CTRL', f'NLFold_{side}_{side}_CTRL_CNST_GRP', mo=True)

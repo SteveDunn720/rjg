@@ -18,12 +18,13 @@ reload(rXform)
 
 
 class UEteeth(UEface):
-    def __init__(self, grp_name=None, ctrl_scale=1, skin=None, toungecurl=True, tongue_spit = True, teeth_split=True):
+    def __init__(self, grp_name=None, ctrl_scale=1, skin=None, toungecurl=True, tongue_spit = True, teeth_split=True, jawfix=True):
         super().__init__(part='Brow', grp_name=grp_name, ctrl_scale=ctrl_scale)
         self.skin = skin
         self.toungecurl = toungecurl
         self.tongue_spit = tongue_spit
         self.teeth_split = teeth_split
+        self.jawfix = jawfix
 
     @auto_profiler_tag
     def build(self):
@@ -75,6 +76,15 @@ class UEteeth(UEface):
 
             if self.skin:
                 mc.skinCluster(*bindjnts, f'{type}teeth')
+
+        if self.jawfix ==  True:
+            jaw_pos = mc.xform('Jaw_M_root', q=True, ws=True, t=True)
+            jaw_offset = mc.group(name = 'UpperTeeth_M_Jaw_Offset_GRP', empty=True)
+            mc.xform(jaw_offset, ws=True, t=jaw_pos)
+            mc.parent('TopTeeth_M_CTRL_CNST_GRP', jaw_offset)
+            upper_top = jaw_offset
+        else:
+            upper_top = 'TopTeeth_M_CTRL_CNST_GRP'
 
 
 
