@@ -189,7 +189,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         jaw = UEjaw('Jaw_M_guides', ctrl_scale=1, mentalis=True)
         jaw.build()
         from rjg.build.parts.UEmouth import UEmouth
-        mouth = UEmouth('Mouth_guides', ctrl_scale=1, Major_Mouth=4, split=True,)
+        mouth = UEmouth('Mouth_guides', ctrl_scale=1, Major_Mouth=4, split=True, spline=True)
         mouth.build()
         from rjg.build.parts.UEteeth import UEteeth
         teeth = UEteeth('Tongue_M_guides', ctrl_scale=1, skin=['tongue', 'topteeth', 'botteeth'])
