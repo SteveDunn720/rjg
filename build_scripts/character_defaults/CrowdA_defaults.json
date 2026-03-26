@@ -20,20 +20,6 @@
             "upClamp": 45.0,
             "downClamp": -45.0
         },
-        "L_Gastro_CTRL": {
-            "rotateOrder": 0,
-            "tgt_rot_influence": 1.0,
-            "Pop_Mult": 0.2,
-            "Up_Clamp": 0.0,
-            "Down_Clamp": -90.0
-        },
-        "R_Gastro_CTRL": {
-            "rotateOrder": 0,
-            "tgt_rot_influence": 1.0,
-            "Pop_Mult": -0.2,
-            "Up_Clamp": 0.0,
-            "Down_Clamp": -90.0
-        },
         "Major_Mouth_L_CornerLip_Mouth_CTRL": {
             "rotateOrder": 0,
             "AutoMouth": 5.0,
@@ -55,6 +41,38 @@
         "Nose_M_NoseRoot_M_CTRL": {
             "rotateOrder": 0,
             "LipFollow": 0.2
+        },
+        "R_LowThigh01_CTRL": {
+            "rotateOrder": 0,
+            "tgt_rot_influence": -0.2,
+            "Pop_Mult": -0.1,
+            "Up_Clamp": 0.0,
+            "Down_Clamp": -180.0
+        },
+        "L_LowThigh01_CTRL": {
+            "rotateOrder": 0,
+            "tgt_rot_influence": -0.2,
+            "Pop_Mult": 0.1,
+            "Up_Clamp": 0.0,
+            "Down_Clamp": -180.0
+        },
+        "R_Gastro_CTRL": {
+            "rotateOrder": 0,
+            "tgt_rot_influence": 1.2,
+            "Pop_Mult": -0.2,
+            "Up_Clamp": 0.0,
+            "Down_Clamp": -90.0
+        },
+        "L_Gastro_CTRL": {
+            "rotateOrder": 0,
+            "tgt_rot_influence": 1.2,
+            "Pop_Mult": 0.2,
+            "Up_Clamp": 0.0,
+            "Down_Clamp": -90.0
+        },
+        "Look_M_M_CTRL": {
+            "rotateOrder": 0,
+            "spaceSwitch": true
         }
     }
 }

@@ -112,6 +112,10 @@
         "Look_M_M_CTRL": {
             "rotateOrder": 0,
             "spaceSwitch": true
+        },
+        "Nose_M_NoseRoot_M_CTRL": {
+            "rotateOrder": 0,
+            "LipFollow": 0.3
         }
     }
 }

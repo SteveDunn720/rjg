@@ -949,6 +949,31 @@ def Build_Correctives(side='L'):
         "realtgt":None,
         },
 
+    f"Trap_{SideShort}_04": {
+        "mus_root": f"{SideLong}_Trap04",
+        "mus_end": f"{SideLong}_Trap_insert04",
+        "tgt_limb": f'neck_M_03_JNT', #f'foot_{SideShort}_01_JNT',
+        "tgt_limb_twist":'Y',
+        "tgt_limb_pop":'X',
+        "tgt_limb_stretch":'Z',
+        "tgt_extra":None,
+        "par_jnt":f'neck_M_01_JNT',
+        "tgt_name":f'Trap04_{SideShort}_insert',
+        "pop_mult":-.4,
+        "slide_mult":.2,
+        "segments":1,
+        "match_index":None,
+        "buildControl":True,
+        "split":False,
+        "Extra_Twist":None,
+        "Control_parent":f'hip_M_CTRL',
+        "upClamp":0,
+        "downClamp":-180,
+        "flip_pop":True,
+        "aimpos":(0, 400, 0),
+        "realtgt":None,
+        },
+
     }
     pop_corrective_dict = {
     f"PSOAS_{SideShort}_01": {
@@ -1660,6 +1685,20 @@ def Build_Correctives(side='L'):
             rig_module=rig_module,
             **data
         )
+
+    
+
+    neck_ADL = mc.createNode('addDL', name=f'{side}_NeckTwist_ADL')
+    mc.connectAttr('neck_M_02_JNT.rotateY', f'{neck_ADL}.input1')
+    mc.connectAttr('neck_M_03_JNT.rotateY', f'{neck_ADL}.input2')
+    neck_remap = mc.createNode('remapValue', name=f'{side}_NeckTwist_remap')
+    mc.connectAttr(f'{neck_ADL}.output', f'{neck_remap}.inputValue')
+    mc.setAttr(f'{neck_remap}.inputMax', mod * 90)
+    mc.setAttr(f'{neck_remap}.outputMax', mod * 6)
+    mc.connectAttr(f'{neck_remap}.outValue', f'SCM_{side}_03_CTRL_SDK_GRP.translateX')
+
+
+    #mc.connectAttr(SCM_L_03_CTRL_SDK_GRP)
 
 def Build_Mid_Correctives(side='M'):
     rig_module = rModule.RigModule(side=side, part="correctives")
