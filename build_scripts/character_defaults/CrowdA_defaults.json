@@ -73,6 +73,18 @@
         "Look_M_M_CTRL": {
             "rotateOrder": 0,
             "spaceSwitch": true
+        },
+        "Eye_L_Upper_Blink_L_CTRL": {
+            "rotateOrder": 0,
+            "blink_mult": -10.0,
+            "blink_mult2": -0.1,
+            "AutoSwivel": 0.0
+        },
+        "Eye_R_Upper_Blink_R_CTRL": {
+            "rotateOrder": 0,
+            "blink_mult": -10.0,
+            "blink_mult2": -0.1,
+            "AutoSwivel": 0.0
         }
     }
 }

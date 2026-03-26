@@ -1,0 +1,28 @@
+{
+    "controls": {
+        "SCM_L_03_CTRL": {
+            "rotateOrder": 0,
+            "PopMult": -0.1,
+            "AutoRot": -0.5,
+            "Slide_mult": 0.0,
+            "upClamp": 180.0,
+            "downClamp": -180.0
+        },
+        "delt_L_03_CTRL": {
+            "rotateOrder": 0,
+            "PopMult": -0.1,
+            "AutoRot": -0.5,
+            "Slide_mult": 0.1,
+            "upClamp": 180.0,
+            "downClamp": -180.0
+        },
+        "delt_L_01_CTRL": {
+            "rotateOrder": 0,
+            "PopMult": 0.1,
+            "AutoRot": -0.5,
+            "Slide_mult": -0.1,
+            "upClamp": 180.0,
+            "downClamp": -180.0
+        }
+    }
+}

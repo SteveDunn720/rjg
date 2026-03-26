@@ -489,7 +489,7 @@ PART_CONFIG = {
 
     "trap04": {
         "Axes": ["Y", "Z", "X"],
-        "Names": ["Left_Trap04", "Left_Trap_insert_04"],
+        "Names": ["Left_Trap04", "Left_Trap_insert04"],
         "Delete_Last": False,
         "Guide_Type": 'Joint',
         "BuildParent":False,
@@ -1436,7 +1436,7 @@ def build_all_guides():
         print(f"Building: {filename}")
         read_type(path)
 
-    guides = ['Jaw_M_ee', 'Eye_L_Aim', 'LowerHead_guide', 'botTeeth', 'Tongue_02', 'Tongue_03', 'Tongue_04', 'Tongue_05', 'Tongue_06', 'Left_TrapInsert03', 'Left_Trapinsert_04', 'Left_DeltInsert', 'Left_PecInsert', 'Left_BicepInsert', 'Left_TrapInsert01', 'Left_Achilles_Insert', 'Left_GluteMax_Insert', 'Left_Graci_02', 'Left_SCMInsert', 'Left_TFL_Insert', 'Left_Tibialis_Insert', "Left_Purlicue_Insert", "Left_FRC_Insert02", "Left_FRC_Insert01"]
+    guides = ['Jaw_M_ee', 'Eye_L_Aim', 'LowerHead_guide', 'botTeeth', 'Tongue_02', 'Tongue_03', 'Tongue_04', 'Tongue_05', 'Tongue_06', 'Left_TrapInsert03', 'Left_Trap_insert04', 'Left_DeltInsert', 'Left_PecInsert', 'Left_BicepInsert', 'Left_TrapInsert01', 'Left_Achilles_Insert', 'Left_GluteMax_Insert', 'Left_Graci_02', 'Left_SCMInsert', 'Left_TFL_Insert', 'Left_Tibialis_Insert', "Left_Purlicue_Insert", "Left_FRC_Insert02", "Left_FRC_Insert01"]
 
     for guide in guides:
         # Get parent
