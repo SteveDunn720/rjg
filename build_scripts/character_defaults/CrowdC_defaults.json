@@ -23,6 +23,20 @@
             "Slide_mult": -0.1,
             "upClamp": 180.0,
             "downClamp": -180.0
+        },
+        "R_Bicep02_CTRL": {
+            "rotateOrder": 0,
+            "tgt_rot_influence": 0.1,
+            "Pop_Mult": -0.4,
+            "Up_Clamp": 180.0,
+            "Down_Clamp": 0.0
+        },
+        "L_Bicep02_CTRL": {
+            "rotateOrder": 0,
+            "tgt_rot_influence": 0.1,
+            "Pop_Mult": 0.4,
+            "Up_Clamp": 180.0,
+            "Down_Clamp": 0.0
         }
     }
 }
