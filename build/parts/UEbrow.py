@@ -9,6 +9,7 @@ import rjg.build.guide as rGuide
 import rjg.libs.transform as rXform
 from rjg.build.UEface import UEface
 from rjg.libs.profile import auto_profiler_tag
+from rjg.libs.spline.matrix_spline import matrix_spline_from_transforms, closest_point_on_matrix_spline, pin_to_matrix_spline
 
 reload(rAttr)
 reload(rChain)
@@ -18,9 +19,10 @@ reload(rXform)
 
 
 class UEbrow(UEface):
-    def __init__(self, grp_name=None, ctrl_scale=1, split=False):
+    def __init__(self, grp_name=None, ctrl_scale=1, split=False, spline=True):
         super().__init__(part='Brow', grp_name=grp_name, ctrl_scale=ctrl_scale,)
         self.split = split
+        self.spline=spline
     
     @auto_profiler_tag
     def build(self):
@@ -38,6 +40,7 @@ class UEbrow(UEface):
         normal_guides = [g for g in guide_list if not any(x in g for x in ['_Upper', '_Lower', '_Major'])]
         major_guides = [f'{prefix}_01_Major', f'{prefix}_02_Major']
 
+
         # Step 2 - Build curves and loft
         upper_curve = UEface.build_curve(upper_guides, prefix + '_BrowUpper')
         lower_curve = UEface.build_curve(lower_guides, prefix + '_BrowLower')
@@ -50,57 +53,128 @@ class UEbrow(UEface):
         null = mc.spaceLocator(name=f'{prefix}_NULL')[0]
         mc.xform(null, ws=True, t=center_pos)
 
-        # Step 4 - Controls + soft joints
-        soft_joints = []
-        for guide in normal_guides:
-            base_name = guide
-            jnt, ctrl, offset = UEface.Simple_joint_and_Control(
-                guide=guide,
-                overwrite=True,
-                overwrite_name=base_name,
-                orient=False,
-                CTRL_Size=0.15,
-                JNT_Size=0.4,
-                check_side=True
+
+        if self.spline == True:
+            inner_drivers = []
+            driven = []
+
+            # Step 4 - Controls + soft joints
+            soft_joints = []
+            for guide in normal_guides:
+                base_name = guide
+                jnt, ctrl, offset = UEface.Simple_joint_and_Control(
+                    guide=guide,
+                    overwrite=True,
+                    overwrite_name=base_name,
+                    orient=False,
+                    CTRL_Size=0.15,
+                    JNT_Size=0.4,
+                    check_side=True
+                )
+
+                mc.select(clear=True)
+                #mc.scaleConstraint('head_M_01_CTRL', f'{offset}')
+
+                mc.select(clear=True)
+                pos = mc.xform(guide, q=True, ws=True, t=True,)
+                soft_jnt = mc.joint(name=f'{guide}_soft_JNT', p=pos, rad=.6)
+                soft_joints.append(soft_jnt)
+                UEface.add_to_face_bind_set(soft_jnt)
+                mc.pointConstraint(jnt, soft_jnt, mo=True)
+                mc.pointConstraint(null, soft_jnt, mo=True)
+                driven.append(offset)
+
+            # Step 5 - Major controls + major joints
+            major_ctrls = []
+            for guide in major_guides:
+                name = guide
+                jnt, ctrl, offset = UEface.Simple_joint_and_Control(
+                    guide=guide,
+                    overwrite=True,
+                    overwrite_name=name,
+                    orient=True,
+                    CTRL_Size=.5,
+                    JNT_Size=0.8,
+                    check_side=True
+                )
+                major_ctrls.append((ctrl, offset))
+                inner_drivers.append(jnt)
+            
+            inner_joint_pos = mc.xform(f'{prefix}_01', q=True, ws=True, t=True)
+            outer_joint_pos = mc.xform(f'{prefix}_05', q=True, ws=True, t=True)
+            mc.select(clear=True)
+            inner_major = mc.joint(name=f'{prefix}_Inner_major_JNT', p=inner_joint_pos)
+            mc.select(clear=True)
+            outer_major = mc.joint(name=f'{prefix}_Outer_major_JNT', p=outer_joint_pos)
+            mc.scaleConstraint('head_M_01_CTRL', f'{outer_major}')
+            mc.scaleConstraint('head_M_01_CTRL', f'{inner_major}')
+
+            major_drivers = [f'{inner_major}', *inner_drivers, f'{outer_major}']
+                
+
+
+            upper_spline = matrix_spline_from_transforms(
+                transforms=major_drivers,
+                transforms_to_pin=driven,
+                name=f"{prefix}_Spline",
+                create_curve=True
             )
 
+
+
+        elif self.spline == False:
+
+            # Step 4 - Controls + soft joints
+            soft_joints = []
+            for guide in normal_guides:
+                base_name = guide
+                jnt, ctrl, offset = UEface.Simple_joint_and_Control(
+                    guide=guide,
+                    overwrite=True,
+                    overwrite_name=base_name,
+                    orient=False,
+                    CTRL_Size=0.15,
+                    JNT_Size=0.4,
+                    check_side=True
+                )
+
+                mc.select(clear=True)
+                mc.select(loft_surface)
+                mc.select(offset, add=True)
+                mc.UVPin()
+                mc.scaleConstraint('head_M_01_CTRL', f'{offset}')
+
+                mc.select(clear=True)
+                pos = mc.xform(guide, q=True, ws=True, t=True,)
+                soft_jnt = mc.joint(name=f'{guide}_soft_JNT', p=pos, rad=.6)
+                soft_joints.append(soft_jnt)
+                UEface.add_to_face_bind_set(soft_jnt)
+                mc.pointConstraint(jnt, soft_jnt, mo=True)
+                mc.pointConstraint(null, soft_jnt, mo=True)
+
+            # Step 5 - Major controls + major joints
+            major_ctrls = []
+            for guide in major_guides:
+                name = guide
+                jnt, ctrl, offset = UEface.Simple_joint_and_Control(
+                    guide=guide,
+                    overwrite=True,
+                    overwrite_name=name,
+                    orient=True,
+                    CTRL_Size=.5,
+                    JNT_Size=0.8,
+                    check_side=True
+                )
+                major_ctrls.append((ctrl, offset))
+
+            inner_joint_pos = mc.xform(f'{prefix}_01', q=True, ws=True, t=True)
+            outer_joint_pos = mc.xform(f'{prefix}_05', q=True, ws=True, t=True)
             mc.select(clear=True)
-            mc.select(loft_surface)
-            mc.select(offset, add=True)
-            mc.UVPin()
-            mc.scaleConstraint('head_M_01_CTRL', f'{offset}')
-
+            inner_major = mc.joint(name=f'{prefix}_Inner_major_JNT', p=inner_joint_pos)
             mc.select(clear=True)
-            pos = mc.xform(guide, q=True, ws=True, t=True,)
-            soft_jnt = mc.joint(name=f'{guide}_soft_JNT', p=pos, rad=.6)
-            soft_joints.append(soft_jnt)
-            UEface.add_to_face_bind_set(soft_jnt)
-            mc.pointConstraint(jnt, soft_jnt, mo=True)
-            mc.pointConstraint(null, soft_jnt, mo=True)
-
-        # Step 5 - Major controls + major joints
-        major_ctrls = []
-        for guide in major_guides:
-            name = guide
-            jnt, ctrl, offset = UEface.Simple_joint_and_Control(
-                guide=guide,
-                overwrite=True,
-                overwrite_name=name,
-                orient=True,
-                CTRL_Size=.5,
-                JNT_Size=0.8,
-                check_side=True
-            )
-            major_ctrls.append((ctrl, offset))
-
-        inner_joint_pos = mc.xform(f'{prefix}_01', q=True, ws=True, t=True)
-        outer_joint_pos = mc.xform(f'{prefix}_05', q=True, ws=True, t=True)
-        mc.select(clear=True)
-        inner_major = mc.joint(name=f'{prefix}_Inner_major_JNT', p=inner_joint_pos)
-        mc.select(clear=True)
-        outer_major = mc.joint(name=f'{prefix}_Outer_major_JNT', p=outer_joint_pos)
-        mc.scaleConstraint('head_M_01_CTRL', f'{outer_major}')
-        mc.scaleConstraint('head_M_01_CTRL', f'{inner_major}')
+            outer_major = mc.joint(name=f'{prefix}_Outer_major_JNT', p=outer_joint_pos)
+            mc.scaleConstraint('head_M_01_CTRL', f'{outer_major}')
+            mc.scaleConstraint('head_M_01_CTRL', f'{inner_major}')
         
 
         # Step 6 - Skin loft to 4 major joints
@@ -171,6 +245,9 @@ class UEbrow(UEface):
             #mc.setAttr(f'{basejnt}.split_joints', value, type='string')
             mc.addAttr(split_joint, longName="split_joints", dataType="string")
             mc.setAttr(f'{split_joint}.split_joints', repr(split_joints), type="string")
+
+        if self.spline:
+            mc.parent(f'Brow_{side}_Spline_MatrixSpline_GRP', f'{prefix}_extras_offset_grp')
 
 #        for object in [f'{prefix}_Brow_ribbon', f'{prefix}_01_{side}_CTRL_CNST_GRP', f'{prefix}_02_{side}_CTRL_CNST_GRP', f'{prefix}_03_{side}_CTRL_CNST_GRP', f'{prefix}_04_{side}_CTRL_CNST_GRP', f'{prefix}_05_{side}_CTRL_CNST_GRP', f'{prefix}_01_Major_JNT', f'{prefix}_02_Major_JNT', f'{prefix}_Inner_major_JNT', f'{prefix}_Outer_major_JNT']:
 #            mc.parent(object, f'{prefix}_extras_offset_grp')

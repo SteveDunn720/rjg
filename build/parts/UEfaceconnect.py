@@ -480,6 +480,13 @@ class UEfaceconnect(UEface):
 
                 mc.parentConstraint('Nose_M_NoseRoot_M_CTRL', f'Nose_{side}_UpperCorner_{side}_CTRL_CNST_GRP', mo=True)
 
+                inner_mouth_remap = mc.createNode('remapValue', name = f'{side}_inner_mouth_remap')
+                mc.setAttr(f'{inner_mouth_remap}.inputMax', -2 * mod)
+                mc.setAttr(f'{inner_mouth_remap}.outputMax', -1.5 * mod)
+                mc.connectAttr(f'Major_Mouth_{side}_CornerLip_Mouth_CTRL.translateX', f'{inner_mouth_remap}.inputValue')
+                mc.connectAttr(f'{inner_mouth_remap}.outValue', f'Major_Mouth_{side}_UpperLip_04_Mouth_CTRL_SDK_GRP.translateX')
+                mc.connectAttr(f'{inner_mouth_remap}.outValue', f'Major_Mouth_{side}_LowerLip_04_Mouth_CTRL_SDK_GRP.translateX')
+
 
 
 

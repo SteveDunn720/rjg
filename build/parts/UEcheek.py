@@ -9,6 +9,7 @@ import rjg.build.guide as rGuide
 import rjg.libs.transform as rXform
 from rjg.build.UEface import UEface
 from rjg.libs.profile import auto_profiler_tag
+from rjg.libs.spline.matrix_spline import matrix_spline_from_transforms, closest_point_on_matrix_spline, pin_to_matrix_spline
 
 reload(rAttr)
 reload(rChain)
@@ -18,10 +19,11 @@ reload(rXform)
 
 
 class UEcheek(UEface):
-    def __init__(self, grp_name=None, ctrl_scale=1, NL=True, split=False):
+    def __init__(self, grp_name=None, ctrl_scale=1, NL=True, split=False, spline=True):
         super().__init__(part='Brow', grp_name=grp_name, ctrl_scale=ctrl_scale)
         self.NL = NL
         self.split=split
+        self.spline=spline
     
     @auto_profiler_tag
     def build(self):
@@ -37,68 +39,143 @@ class UEcheek(UEface):
         ]
         #check_guides(group, prefix, required_guides)
         if self.NL:
-            inner_guides = [f'{prefix}_NLFold_0{i}_inner' for i in [5,4,3,2,1]]
-            outer_guides = [f'{prefix}_NLFold_0{i}_outer' for i in [1,2,3,4,5]]
+            if self.spline:
 
-            # Step 1 - Build curves
-            inner_curve = UEface.build_curve(inner_guides, prefix + '_NLFold_inner')
-            outer_curve = UEface.build_curve(outer_guides, prefix + '_NLFold_outer')
+                driver = []
+                driven = []
 
-            # Step 2 - Loft surface
-            ribbon_surface = mc.loft(inner_curve, outer_curve, ch=False, u=True, c=False, ar=True, d=3, ss=1, rn=False, po=0,)[0]
-            ribbon_surface = mc.rename(ribbon_surface, prefix + '_NLFold_ribbon')
-            mc.delete(inner_curve, outer_curve)
 
-            # Step 3 - Build center controls
-            mid_controls = []
-            for i in range(1, 6):
-                inner = f'{prefix}_NLFold_0{i}_inner'
-                outer = f'{prefix}_NLFold_0{i}_outer'
+                inner_guides = [f'{prefix}_NLFold_0{i}_inner' for i in [5,4,3,2,1]]
+                outer_guides = [f'{prefix}_NLFold_0{i}_outer' for i in [1,2,3,4,5]]
 
-                pos_inner = mc.xform(inner, q=True, ws=True, t=True)
-                pos_outer = mc.xform(outer, q=True, ws=True, t=True)
-                center = [(a + b) / 2.0 for a, b in zip(pos_inner, pos_outer)]
+                # Step 1 - Build curves
+                inner_curve = UEface.build_curve(inner_guides, prefix + '_NLFold_inner')
+                outer_curve = UEface.build_curve(outer_guides, prefix + '_NLFold_outer')
 
-                ctrl_base = f'{prefix}_NLFold_0{i}'
-                jnt, ctrl, offset = UEface.Simple_joint_and_Control(
-                    guide=inner,
-                    overwrite=True,
-                    overwrite_name=ctrl_base,
-                    orient=True,
-                    CTRL_Size=0.2,
-                    JNT_Size=0.5,
-                    check_side=True,
-                )
-                mc.xform(offset, ws=True, t=center)
-                mid_controls.append((jnt, ctrl, offset))
+                # Step 2 - Loft surface
+                ribbon_surface = mc.loft(inner_curve, outer_curve, ch=False, u=True, c=False, ar=True, d=3, ss=1, rn=False, po=0,)[0]
+                ribbon_surface = mc.rename(ribbon_surface, prefix + '_NLFold_ribbon')
+                mc.delete(inner_curve, outer_curve)
 
-                # UVPin
-                mc.select(clear=True)
-                mc.select(ribbon_surface)
-                mc.select(offset, add=True)
-                mc.UVPin()
-                mc.scaleConstraint('head_M_01_CTRL', f'{offset}')
+                # Step 3 - Build center controls
+                mid_controls = []
+                for i in range(1, 6):
+                    inner = f'{prefix}_NLFold_0{i}_inner'
+                    outer = f'{prefix}_NLFold_0{i}_outer'
 
-            # Step 4 - Add major joints
-            major_joints = []
-            for i in [2, 4, 5]:
-                mc.select(clear=True)
-                inner = f'{prefix}_NLFold_0{i}_inner'
-                outer = f'{prefix}_NLFold_0{i}_outer'
+                    pos_inner = mc.xform(inner, q=True, ws=True, t=True)
+                    pos_outer = mc.xform(outer, q=True, ws=True, t=True)
+                    center = [(a + b) / 2.0 for a, b in zip(pos_inner, pos_outer)]
 
-                # Calculate center position
-                pos_inner = mc.xform(inner, q=True, ws=True, t=True)
-                pos_outer = mc.xform(outer, q=True, ws=True, t=True)
-                center_pos = [(a + b) / 2.0 for a, b in zip(pos_inner, pos_outer)]
+                    ctrl_base = f'{prefix}_NLFold_0{i}'
+                    jnt, ctrl, offset = UEface.Simple_joint_and_Control(
+                        guide=inner,
+                        overwrite=True,
+                        overwrite_name=ctrl_base,
+                        orient=True,
+                        CTRL_Size=0.2,
+                        JNT_Size=0.5,
+                        check_side=True,
+                    )
+                    mc.xform(offset, ws=True, t=center)
+                    mid_controls.append((jnt, ctrl, offset))
+                    driven.append(offset)
 
-                # Use rotation from inner
-                rot_inner = mc.xform(inner, q=True, ws=True, ro=True)
+                    # UVPin
+                    mc.select(clear=True)
 
-                jnt_name = f'{prefix}_NLFold_0{i}_Major_jnt'
-                jnt = mc.joint(name=jnt_name, p=center_pos)
-                mc.xform(jnt, ws=True, ro=rot_inner)
+                # Step 4 - Add major joints
+                major_joints = []
+                for i in [2, 4, 5]:
+                    mc.select(clear=True)
+                    inner = f'{prefix}_NLFold_0{i}_inner'
+                    outer = f'{prefix}_NLFold_0{i}_outer'
 
-                major_joints.append(jnt)
+                    # Calculate center position
+                    pos_inner = mc.xform(inner, q=True, ws=True, t=True)
+                    pos_outer = mc.xform(outer, q=True, ws=True, t=True)
+                    center_pos = [(a + b) / 2.0 for a, b in zip(pos_inner, pos_outer)]
+
+                    # Use rotation from inner
+                    rot_inner = mc.xform(inner, q=True, ws=True, ro=True)
+
+                    jnt_name = f'{prefix}_NLFold_0{i}_Major_jnt'
+                    jnt = mc.joint(name=jnt_name, p=center_pos)
+                    mc.xform(jnt, ws=True, ro=rot_inner)
+
+                    major_joints.append(jnt)
+
+
+                upper_spline = matrix_spline_from_transforms(
+                transforms=major_joints,
+                transforms_to_pin=driven,
+                name=f"{prefix}_Spline",
+                create_curve=True,
+                degree=2
+            )
+            else:
+                inner_guides = [f'{prefix}_NLFold_0{i}_inner' for i in [5,4,3,2,1]]
+                outer_guides = [f'{prefix}_NLFold_0{i}_outer' for i in [1,2,3,4,5]]
+
+                # Step 1 - Build curves
+                inner_curve = UEface.build_curve(inner_guides, prefix + '_NLFold_inner')
+                outer_curve = UEface.build_curve(outer_guides, prefix + '_NLFold_outer')
+
+                # Step 2 - Loft surface
+                ribbon_surface = mc.loft(inner_curve, outer_curve, ch=False, u=True, c=False, ar=True, d=3, ss=1, rn=False, po=0,)[0]
+                ribbon_surface = mc.rename(ribbon_surface, prefix + '_NLFold_ribbon')
+                mc.delete(inner_curve, outer_curve)
+
+                # Step 3 - Build center controls
+                mid_controls = []
+                for i in range(1, 6):
+                    inner = f'{prefix}_NLFold_0{i}_inner'
+                    outer = f'{prefix}_NLFold_0{i}_outer'
+
+                    pos_inner = mc.xform(inner, q=True, ws=True, t=True)
+                    pos_outer = mc.xform(outer, q=True, ws=True, t=True)
+                    center = [(a + b) / 2.0 for a, b in zip(pos_inner, pos_outer)]
+
+                    ctrl_base = f'{prefix}_NLFold_0{i}'
+                    jnt, ctrl, offset = UEface.Simple_joint_and_Control(
+                        guide=inner,
+                        overwrite=True,
+                        overwrite_name=ctrl_base,
+                        orient=True,
+                        CTRL_Size=0.2,
+                        JNT_Size=0.5,
+                        check_side=True,
+                    )
+                    mc.xform(offset, ws=True, t=center)
+                    mid_controls.append((jnt, ctrl, offset))
+
+                    # UVPin
+                    mc.select(clear=True)
+                    mc.select(ribbon_surface)
+                    mc.select(offset, add=True)
+                    mc.UVPin()
+                    mc.scaleConstraint('head_M_01_CTRL', f'{offset}')
+
+                # Step 4 - Add major joints
+                major_joints = []
+                for i in [2, 4, 5]:
+                    mc.select(clear=True)
+                    inner = f'{prefix}_NLFold_0{i}_inner'
+                    outer = f'{prefix}_NLFold_0{i}_outer'
+
+                    # Calculate center position
+                    pos_inner = mc.xform(inner, q=True, ws=True, t=True)
+                    pos_outer = mc.xform(outer, q=True, ws=True, t=True)
+                    center_pos = [(a + b) / 2.0 for a, b in zip(pos_inner, pos_outer)]
+
+                    # Use rotation from inner
+                    rot_inner = mc.xform(inner, q=True, ws=True, ro=True)
+
+                    jnt_name = f'{prefix}_NLFold_0{i}_Major_jnt'
+                    jnt = mc.joint(name=jnt_name, p=center_pos)
+                    mc.xform(jnt, ws=True, ro=rot_inner)
+
+                    major_joints.append(jnt)
             # Step 5 - Skin ribbon
             mc.select([ribbon_surface] + major_joints)
             mc.skinCluster(tsb=True)
@@ -147,3 +224,6 @@ class UEcheek(UEface):
         mc.parent(f'{prefix}_extra_offsets', 'RIG')
         if self.NL:
             mc.hide(f'{prefix}_NLFold_ribbon', f'{prefix}_NLFold_02_Major_jnt', f'{prefix}_NLFold_04_Major_jnt', f'{prefix}_NLFold_05_Major_jnt')
+            if self.spline:
+                mc.parent(f'Cheek_{side}_Spline_MatrixSpline_GRP', f'Cheek_{side}_extra_offsets')
+                mc.hide(f'Cheek_{side}_Spline_MatrixSpline_GRP')

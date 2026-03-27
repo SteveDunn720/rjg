@@ -309,6 +309,8 @@ class UEmouth(UEface):
             mc.hide(upper_lip_surf, lower_lip_surf)
             mc.parent(upper_lip_surf, lower_lip_surf, 'Mouth_Extras_offsets')
 
+            mc.parent(f'Mouth_UpperLip_MatrixSpline_GRP', 'Mouth_LowerLip_MatrixSpline_GRP', 'Mouth_Extras_offsets')
+
 
 
         if self.spline == False:
@@ -505,3 +507,4 @@ class UEmouth(UEface):
                 mc.parent('Major_Mouth_L_CornerLip_Mouth_CTRL_CNST_GRP', 'Major_Mouth_R_CornerLip_Mouth_CTRL_CNST_GRP', upper_top, masterctrl)
                 mc.connectAttr(f"{masterctrl}.translate", 'LowerLip_M_M_CTRL_OFF_GRP.translate')
                 mc.connectAttr(f"{masterctrl}.rotate", 'LowerLip_M_M_CTRL_OFF_GRP.rotate')
+            
