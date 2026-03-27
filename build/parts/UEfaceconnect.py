@@ -233,8 +233,6 @@ class UEfaceconnect(UEface):
             mc.parent('Brow_L_NULL', 'Brow_R_NULL', 'UpperHead_M_CTRL')
             mc.hide('Brow_L_NULL', 'Brow_R_NULL')
             mc.parent('Brow_L_Master_L_CTRL_CNST_GRP', 'Brow_R_Master_R_CTRL_CNST_GRP', 'Cheek_R_CheekBone_R_CTRL_CNST_GRP', 'Cheek_L_CheekBone_L_CTRL_CNST_GRP', 'UpperHead_M_CTRL' )
-            mc.parentConstraint('Nose_M_NoseRoot_M_CTRL', 'Cheek_L_NLFold_02_Major_jnt', mo=True)
-            mc.parentConstraint('Nose_M_NoseRoot_M_CTRL', 'Cheek_R_NLFold_02_Major_jnt', mo=True)
             mc.parentConstraint('Jaw_M_root_M_CTRL', 'Cheek_L_NLFold_05_Major_jnt', mo=True)
             mc.parentConstraint('Jaw_M_root_M_CTRL', 'Cheek_R_NLFold_05_Major_jnt', mo=True)
             mc.parent('Cheek_L_Puff_L_CTRL_CNST_GRP', 'Cheek_R_Puff_R_CTRL_CNST_GRP', 'LowerHead_M_CTRL')
@@ -486,6 +484,13 @@ class UEfaceconnect(UEface):
                 mc.connectAttr(f'Major_Mouth_{side}_CornerLip_Mouth_CTRL.translateX', f'{inner_mouth_remap}.inputValue')
                 mc.connectAttr(f'{inner_mouth_remap}.outValue', f'Major_Mouth_{side}_UpperLip_04_Mouth_CTRL_SDK_GRP.translateX')
                 mc.connectAttr(f'{inner_mouth_remap}.outValue', f'Major_Mouth_{side}_LowerLip_04_Mouth_CTRL_SDK_GRP.translateX')
+
+                mc.hide(f'Cheek_{side}_NLFold_01_Major_jnt')
+                mc.parent(f'Cheek_{side}_NLFold_01_Major_jnt', f'Cheek_{side}_extra_offsets')
+                mc.parentConstraint(f'Nose_{side}_UpperCorner_{side}_CTRL', f'Cheek_{side}_NLFold_01_Major_jnt')
+                mc.parentConstraint(f'Cheek_{side}_CheekBone_{side}_CTRL', f'Cheek_{side}_NLFold_02_Major_jnt', mo=True)
+                mc.setAttr(f'Cheek_{side}_NLFold_02_Major_jnt_parentConstraint1.Cheek_{side}_CheekBone_{side}_CTRLW1', .5)
+            
 
 
 

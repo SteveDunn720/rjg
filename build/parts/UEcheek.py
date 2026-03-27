@@ -86,7 +86,7 @@ class UEcheek(UEface):
 
                 # Step 4 - Add major joints
                 major_joints = []
-                for i in [2, 4, 5]:
+                for i in [1, 2, 4, 5]:
                     mc.select(clear=True)
                     inner = f'{prefix}_NLFold_0{i}_inner'
                     outer = f'{prefix}_NLFold_0{i}_outer'
@@ -105,13 +105,15 @@ class UEcheek(UEface):
 
                     major_joints.append(jnt)
 
+                mc.parentConstraint(major_joints[2], major_joints[1], mo=True)
+
 
                 upper_spline = matrix_spline_from_transforms(
                 transforms=major_joints,
                 transforms_to_pin=driven,
                 name=f"{prefix}_Spline",
                 create_curve=True,
-                degree=2
+                degree=3
             )
             else:
                 inner_guides = [f'{prefix}_NLFold_0{i}_inner' for i in [5,4,3,2,1]]

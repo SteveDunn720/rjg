@@ -562,12 +562,14 @@ class TopoAutoRigUI(QtWidgets.QDialog):
         utils_section = CollapsibleSection("UTILS")
 
         self.flip_guides_btn = QtWidgets.QPushButton("Flip Guides")
-        self.save_controls_btn = QtWidgets.QPushButton("Save Out Controls")
+        self.save_controls_btn = QtWidgets.QPushButton("Save Out Control Shapes")
         self.save_defaults_btn = QtWidgets.QPushButton("Save Control Defaults")
+        self.reload_btn = QtWidgets.QPushButton("Reload")
 
         utils_section.content_layout.addWidget(self.flip_guides_btn)
         utils_section.content_layout.addWidget(self.save_controls_btn)
         utils_section.content_layout.addWidget(self.save_defaults_btn)
+        utils_section.content_layout.addWidget(self.reload_btn)
 
         main_layout.addWidget(utils_section)
 
@@ -595,10 +597,22 @@ class TopoAutoRigUI(QtWidgets.QDialog):
         self.save_controls_btn.clicked.connect(self.save_out_controls)
         self.save_defaults_btn.clicked.connect(self.save_control_defaults)
         self.load_all_btn.clicked.connect(self.load_all_file)
+        self.reload_btn.clicked.connect(self.reload)
 
     # ------------------------------------------------
     # Class Functions
     # ------------------------------------------------
+
+    def reload(self):
+        import sys
+        modules = [name for name in sys.modules.keys() if name.startswith("rjg")]
+        for name in modules:
+            del sys.modules[name]
+        import rjg
+
+        show_ui()
+
+
 
     def load_all_file(self):
         """

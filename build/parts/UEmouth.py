@@ -20,7 +20,7 @@ reload(rGuide)
 reload(rXform)
 
 class UEmouth(UEface):
-    def __init__(self, grp_name=None, ctrl_scale=1, Major_Mouth=3, Major_2=None, rib_mouth=0.2, cornerhelper=False, mastercontrol=True, split=False, jawfix=True, spline=False):
+    def __init__(self, grp_name=None, ctrl_scale=1, Major_Mouth=3, Major_2=None, rib_mouth=0.2, cornerhelper=False, mastercontrol=True, split=False, jawfix=True, spline=False, soft=False):
         super().__init__(part='Mouth', grp_name=grp_name, ctrl_scale=ctrl_scale,)
         self.Major_Mouth = Major_Mouth
         self.Major_2 = Major_2
@@ -30,6 +30,7 @@ class UEmouth(UEface):
         self.split = split
         self.jawfix = jawfix
         self.spline=spline
+        self.soft=False
 
     def get_ordered_lip_guides(self, prefix, guides, guide_base, has_mid=True):
         """
@@ -158,6 +159,7 @@ class UEmouth(UEface):
                 upper_top = jaw_offset
             else:
                 upper_top = 'UpperLip_M_M_CTRL_CNST_GRP'
+        
 
 
 
@@ -189,6 +191,8 @@ class UEmouth(UEface):
             upperdriven = []
             lowerdriven = []
             rib_offsets = []
+            jnts = []
+            softjnts = []
             to_remove = [f'{prefix}_L_CornerLip', f'{prefix}_R_CornerLip']
             filtered1 = [item for item in upper_lip if item not in to_remove]
             filtered2 = [item for item in lower_lip if item not in to_remove]  # could filter further if needed
@@ -201,6 +205,11 @@ class UEmouth(UEface):
                 mc.select(clear=True)
 
                 upperdriven.append(ctrl_offset)
+                if self.soft:
+                    soft_jnt = mc.duplicate(jnt, name=f'Soft_{jnt}', parentOnly=True)[0]
+                    jnts.append(ctrl)
+                    softjnts.append(soft_jnt)
+
 
 
                 rib_offsets.append(ctrl_offset)
@@ -215,6 +224,10 @@ class UEmouth(UEface):
                 mc.select(clear=True)
 
                 lowerdriven.append(ctrl_offset)
+                if self.soft:
+                    soft_jnt = mc.duplicate(jnt, name=f'Soft_{jnt}', parentOnly=True)[0]
+                    jnts.append(ctrl)
+                    softjnts.append(soft_jnt)
 
 
                 rib_offsets.append(ctrl_offset)
@@ -229,9 +242,19 @@ class UEmouth(UEface):
                     mc.addAttr(split_joint, longName="split_joints", dataType="string")
                     mc.setAttr(f'{split_joint}.split_joints', repr(split_joints), type="string")
 
+                    if self.soft:
+                        split_joint = f'Soft_Mouth_L_{part}Lip_05_JNT'
+                        split_joints: list[str] = [f'Soft_Mouth_L_{part}Lip_05_JNT', f'Soft_Mouth_L_{part}Lip_04_JNT', f'Soft_Mouth_L_{part}Lip_03_JNT', f'Soft_Mouth_L_{part}Lip_02_JNT', f'Soft_Mouth_M_{part}Lip_01_JNT', f'Soft_Mouth_R_{part}Lip_02_JNT', f'Soft_Mouth_R_{part}Lip_03_JNT', f'Soft_Mouth_R_{part}Lip_04_JNT', f'Soft_Mouth_R_{part}Lip_05_JNT']
+                        mc.addAttr(split_joint, longName="split_joints", dataType="string")
+                        mc.setAttr(f'{split_joint}.split_joints', repr(split_joints), type="string")
+
             # -------------------------------
             # Step 3 - Build Matrix Splines
             # -------------------------------
+
+            upperdriven.reverse()
+
+            lowerdriven.reverse()
             upper_spline = matrix_spline_from_transforms(
                 transforms=upper_major_drivers,
                 transforms_to_pin=upperdriven,
@@ -310,6 +333,11 @@ class UEmouth(UEface):
             mc.parent(upper_lip_surf, lower_lip_surf, 'Mouth_Extras_offsets')
 
             mc.parent(f'Mouth_UpperLip_MatrixSpline_GRP', 'Mouth_LowerLip_MatrixSpline_GRP', 'Mouth_Extras_offsets')
+
+            for i, soft_jnt in enumerate(softjnts):
+                mc.parentConstraint(jnts[i], soft_jnt, mo=True)
+                mc.parentConstraint(masterctrl, soft_jnt, mo=True)
+                mc.scaleConstraint(masterctrl, soft_jnt, mo=True)
 
 
 
