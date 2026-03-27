@@ -25,6 +25,7 @@ import rjg.post.PoseInterpExtras as expi
 import rjg.post.character_defaults as char_default
 import rjg.post.smoothribbon as smooth_rib
 
+
 reload(rUtil)
 reload(rProp)
 reload(rBuild)
@@ -122,7 +123,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
 
 
     ### BUILD SCRIPT
-    root = rBuild.build_module(module_type='root', side='M', part='root', model_path=mp, guide_path=gp, base=production, muscle_ctrl=False)
+    root = rBuild.build_module(module_type='root', side='M', part='root', model_path=mp, guide_path=gp, base=production, muscle_ctrl=True)
     if ep:
         extras = rFile.import_hierarchy(ep, parent='MODEL')[0]
     #Fun Camera Thing
@@ -265,9 +266,13 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
             foot_shape = footshp
         )
 
-    mc.delete('Guides')
-    
-    #Skinning Proccess Starts here
+
+    ##Pistons 
+    for side in ['L', 'R']:
+        from rjg.build.parts.mechpistons import Build_Correctives
+
+        Build_Correctives(side)
+
 
     
 
@@ -374,4 +379,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
 
 
     print(f"\n{character} rig build complete.")
+
+
+    #run('Mech', mp=r'G:\bobo\character\Rigs\Mech\Mech_Model.mb', gp=r'G:\bobo\character\Rigs\Mech\Mech_Guides.mb', ep=r'G:\bobo\character\Rigs\Mech\Mech_Extras.mb', cp=None, sp=None, pp=None, face=False, previs=False)
 
