@@ -165,6 +165,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
 
     neck = rBuild.build_module(module_type='autoneck', side='M', part='neck', guide_list=neckList, ctrl_scale=10, segments=3, )
     head = rBuild.build_module(module_type='head', side='M', part='head', guide_list=['Head'], ctrl_scale=50,  autoneckik=True)
+    hat = rBuild.build_module(module_type='arbitrary', side='M', part='hat', guide_list=['HeadTop_End'], ctrl_scale=10, par_ctrl='head_M_01_CTRL' , par_jnt='head_M_JNT' ,shape='quad_arrow', scale =True)
 
     #
     if face:

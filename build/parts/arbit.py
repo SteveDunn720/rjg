@@ -11,11 +11,13 @@ reload(rCtrl)
 reload(rAttr)
 
 class Arbitrary(rModule.RigModule):
-    def __init__(self, side=None, part=None, guide_list=None, ctrl_scale=None, shape='circle', model_path=None, guide_path=None, par_ctrl=None, par_jnt=None):
+    def __init__(self, side=None, part=None, guide_list=None, ctrl_scale=None, shape='circle', model_path=None, guide_path=None, par_ctrl=None, par_jnt=None, scale=True):
         super().__init__(side=side, part=part, guide_list=guide_list, ctrl_scale=ctrl_scale, model_path=model_path, guide_path=guide_path)
 
         self.par_ctrl = par_ctrl
         self.par_jnt = par_jnt
+        self.shape = shape
+        self.scale = scale
 
         self.create_module()
 
@@ -30,7 +32,7 @@ class Arbitrary(rModule.RigModule):
 
 
     def control_rig(self):
-        self.arbit_ctrl = rCtrl.Control(parent=self.control_grp, shape='circle', side=self.side, suffix='CTRL', name=self.base_name, axis='z', group_type='main', rig_type='primary', translate=self.guide_list[0], rotate=(0, 0, 0), ctrl_scale=self.ctrl_scale)
+        self.arbit_ctrl = rCtrl.Control(parent=self.control_grp, shape=self.shape, side=self.side, suffix='CTRL', name=self.base_name, axis='z', group_type='main', rig_type='primary', translate=self.guide_list[0], rotate=(0, 0, 0), ctrl_scale=self.ctrl_scale)
         self.arbit_ctrl.tag_as_controller()
 
     def output_rig(self):
@@ -51,3 +53,6 @@ class Arbitrary(rModule.RigModule):
         rAttr.Attribute(node=self.part_grp, type='plug', value=[self.par_jnt], name='skeletonPlugs', children_name=[self.bind_joints[0]])
 
         rAttr.Attribute(node=self.part_grp, type='plug', value=[self.par_ctrl], name='pacRigPlugs', children_name=[self.base_name + '_' + self.side + '_CTRL_CNST_GRP'])
+        if self.scale:
+            mc.scaleConstraint(self.arbit_ctrl.ctrl, self.bind_joints[0])
+            mc.scaleConstraint(self.par_ctrl, self.arbit_ctrl.ctrl,)
