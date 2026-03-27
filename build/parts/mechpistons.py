@@ -424,8 +424,8 @@ def Build_Correctives(side='L'):
 
     mus_corrective_dict = {
     f"armpiston_{SideShort}_01": {
-        "mus_root": f"{SideLong}_LegPiston_01",
-        "mus_end": f"{SideLong}_LegPiston_02",
+        "mus_root": f"{SideLong}_ArmPiston_01",
+        "mus_end": f"{SideLong}_ArmPiston_02",
         "tgt_limb": f"hand_{SideShort}_JNT",
         "tgt_limb_twist":'Y',
         "tgt_limb_pop":'X',
