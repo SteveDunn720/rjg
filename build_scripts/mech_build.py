@@ -272,6 +272,54 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         from rjg.build.parts.mechpistons import Build_Correctives
 
         Build_Correctives(side)
+    
+    import rjg.build.parts.spline_from_curve as spline_module
+
+    reload(spline_module)
+
+    splinepart = spline_module.spline()
+
+    result = splinepart.build_spline_from_curve(
+        curve_name="polyToCurve1",
+        driver_count=4,
+        driven_count=10,
+        prefix="L_Tube_A",
+        par_list=[ "hand_L_JNT", "hand_L_JNT", "chest_M_JNT", "chest_M_JNT"],
+        par_jnt="chest_M_JNT",
+        side="L"
+    )
+    result = splinepart.build_spline_from_curve(
+        curve_name="polyToCurve2",
+        driver_count=4,
+        driven_count=10,
+        prefix="L_Tube_B",
+        par_list=["hand_L_JNT", "hand_L_JNT","chest_M_JNT", "chest_M_JNT" ],
+        par_jnt="chest_M_JNT",
+        side="L"
+    )
+
+    result = splinepart.build_spline_from_curve(
+        curve_name="polyToCurve3",
+        driver_count=4,
+        driven_count=10,
+        prefix="R_Tube_A",
+        par_list=["chest_M_JNT", "chest_M_JNT", "hand_R_JNT", "hand_R_JNT",],
+        par_jnt="chest_M_JNT",
+        side="R"
+    )
+    result = splinepart.build_spline_from_curve(
+        curve_name="polyToCurve4",
+        driver_count=4,
+        driven_count=10,
+        prefix="R_Tube_B",
+        par_list=["chest_M_JNT", "chest_M_JNT", "hand_R_JNT", "hand_R_JNT",],
+        par_jnt="chest_M_JNT",
+        side="R"
+    )
+    
+
+    
+    mc.delete('Guides')
 
 
     
@@ -377,9 +425,12 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
 
     apply_control_file(f"{groups}/bobo/character/Rigs/{character}/Controls/controls.json")
 
+    mc.setAttr('armpiston_R_01_endNULL_JNT.rotate', 9.93, 45.115, 90.423)
+    mc.setAttr('armpiston_L_01_endNULL_JNT.rotate', 77.827, 0, -11.18)
+
 
     print(f"\n{character} rig build complete.")
 
 
-    #run('Mech', mp=r'G:\bobo\character\Rigs\Mech\Mech_Model.mb', gp=r'G:\bobo\character\Rigs\Mech\Mech_Guides.mb', ep=r'G:\bobo\character\Rigs\Mech\Mech_Extras.mb', cp=None, sp=None, pp=None, face=False, previs=False)
+    #run('Mech', mp=r'G:\bobo\character\Rigs\Mech\Mech_Model.mb', gp=r'G:\bobo\character\Rigs\Mech\Mech_Guides.mb', ep=r'G:\bobo\character\Rigs\Mech\Mech_Extras.mb', cp=r"G:/bobo/character/Rigs/Mech/Controls/Mech_control_curves.json", sp=r"G:/bobo/character/Rigs/Mech/SkinFiles/Mech_Skins.json", pp=None, face=False, previs=False)
 
