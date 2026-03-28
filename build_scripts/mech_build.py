@@ -192,11 +192,11 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
             shape = clavshape,
             mo=Clavmo,
             aim=Clavaim,
-            chest_control=chest_control,
-            scap_control=scap_control,
+            chest_control=False,
+            scap_control=False,
         )
 
-        prop_control = True
+        prop_control = False
         arm: BipedLimb = rBuild.build_module(
             module_type="biped_limb",
             side=fs[0],
@@ -272,7 +272,14 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         from rjg.build.parts.mechpistons import Build_Correctives
 
         Build_Correctives(side)
-    
+
+        sidelong = 'Left' if side in ['L'] else 'Right'
+
+        lever = rBuild.build_module(module_type='arbitrary', side=side, part='lever', guide_list=[f'{sidelong}_handle'], ctrl_scale=10, par_ctrl='chest_M_JNT' , par_jnt='chest_M_JNT' ,shape='circle', scale=True)
+
+        guns = rBuild.build_module(module_type='arbitrary2', side=side, part='gun', guide_list=f'{sidelong}_guns', ctrl_scale=20, par_ctrl=f'hand_{side}_JNT' , par_jnt=f'hand_{side}_JNT' ,shape='circle', scale=True)
+
+        #Left_guns
     import rjg.build.parts.spline_from_curve as spline_module
 
     reload(spline_module)
@@ -284,7 +291,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         driver_count=4,
         driven_count=10,
         prefix="L_Tube_A",
-        par_list=[ "hand_L_JNT", "hand_L_JNT", "chest_M_JNT", "chest_M_JNT"],
+        par_list=[ "hand_L_JNT", "hand_L_JNT", "chest_M_JNT", "chest_M_JNT","chest_M_JNT", "chest_M_JNT"],
         par_jnt="chest_M_JNT",
         side="L"
     )
@@ -293,7 +300,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         driver_count=4,
         driven_count=10,
         prefix="L_Tube_B",
-        par_list=["hand_L_JNT", "hand_L_JNT","chest_M_JNT", "chest_M_JNT" ],
+        par_list=["hand_L_JNT", "hand_L_JNT","chest_M_JNT", "chest_M_JNT","chest_M_JNT", "chest_M_JNT" ],
         par_jnt="chest_M_JNT",
         side="L"
     )
