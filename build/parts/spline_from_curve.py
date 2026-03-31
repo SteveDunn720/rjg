@@ -53,6 +53,10 @@ class spline():
             )
 
             joints = []
+            main = []
+            lastjnt= None
+            if parent:
+                TFRM_GRP = mc.group(empty = True, name =f'{prefix}_{label}_TFRM_GRP')
 
             # Get CV positions
             cvs = mc.ls(f"{dup_curve}.cv[*]", fl=True)
@@ -61,29 +65,40 @@ class spline():
                 pos = mc.pointPosition(cv, w=True)
                 if parent == False:
                     mc.select(clear=True)
+                else:
+                    if lastjnt:
+                        mc.select(lastjnt)
                 jnt = mc.joint(
                     p=pos,
                     name=f"{prefix}_{label}_{str(i+1).zfill(2)}_JNT"
                 )
                 if parent:
                     rig_module.tag_bind_joints(jnt)
+                    transform_driver = mc.group(empty=True, name=f"{prefix}_{label}_{str(i+1).zfill(2)}_Driver_TFRM")
+                    mc.xform(transform_driver, t=pos, ws=True)
+                    mc.parent(transform_driver, TFRM_GRP)
+                    mc.parentConstraint(transform_driver , jnt, mo=True)
+                    mc.scaleConstraint(transform_driver , jnt, mo=True)
+                    lastjnt = jnt
+                    main.append(transform_driver)
                 joints.append(jnt)
 
-            return joints, dup_curve
+
+            return joints, dup_curve, main
 
         # -----------------------------------
         # Build driver joints
         # -----------------------------------
-        driver_jnts, driver_curve = build_joints_from_curve(curve_name, driver_count, "driver", False)
+        driver_jnts, driver_curve, driver_null = build_joints_from_curve(curve_name, driver_count, "driver", False)
 
         # -----------------------------------
         # Build driven joints
         # -----------------------------------
-        driven_jnts, driven_curve = build_joints_from_curve(curve_name, driven_count, "driven", True)
+        driven_jnts, driven_curve, driver_transfroms = build_joints_from_curve(curve_name, driven_count, "driven", True)
 
         upper_spline = matrix_spline_from_transforms(
                 transforms=driver_jnts,
-                transforms_to_pin=driven_jnts,
+                transforms_to_pin=driver_transfroms,
                 name=f"{prefix}_Spline",
                 create_curve=False
             )

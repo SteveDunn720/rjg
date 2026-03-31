@@ -116,6 +116,20 @@
         "Nose_M_NoseRoot_M_CTRL": {
             "rotateOrder": 0,
             "LipFollow": 0.3
+        },
+        "L_Gastro_CTRL": {
+            "rotateOrder": 0,
+            "tgt_rot_influence": 0.8,
+            "Pop_Mult": 0.30000000000000004,
+            "Up_Clamp": 0.0,
+            "Down_Clamp": -90.0
+        },
+        "R_Gastro_CTRL": {
+            "rotateOrder": 0,
+            "tgt_rot_influence": 0.8,
+            "Pop_Mult": -0.30000000000000004,
+            "Up_Clamp": 0.0,
+            "Down_Clamp": -90.0
         }
     }
 }
