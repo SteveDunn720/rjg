@@ -112,6 +112,8 @@ class spline():
             mc.parentConstraint(driver_control.ctrl, jnt, mo=True)
             if par_list and i < len(par_list):
                 mc.parentConstraint(par_list[i], driver_control.top, mo=True)
+            else:
+                mc.parentConstraint(par_list[-1], driver_control.top, mo=True)
             mc.parent(jnt, driver_control.top, master_grp)
             mc.hide(jnt)
 
