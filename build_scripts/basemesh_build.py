@@ -13,6 +13,7 @@ import rjg.post.dataIO.controls as rCtrlIO
 import rjg.libs.control.draw as draw
 import rjg.build_scripts.bettercontrols as c
 import rjg.post.character_defaults as char_def
+import rjg.post.UE_Rig_Export as UE_Export
 
 import shutil
 
@@ -565,11 +566,13 @@ class TopoAutoRigUI(QtWidgets.QDialog):
         self.save_controls_btn = QtWidgets.QPushButton("Save Out Control Shapes")
         self.save_defaults_btn = QtWidgets.QPushButton("Save Control Defaults")
         self.reload_btn = QtWidgets.QPushButton("Reload")
+        self.UEexport_btn = QtWidgets.QPushButton("UE Rig Export")
 
         utils_section.content_layout.addWidget(self.flip_guides_btn)
         utils_section.content_layout.addWidget(self.save_controls_btn)
         utils_section.content_layout.addWidget(self.save_defaults_btn)
         utils_section.content_layout.addWidget(self.reload_btn)
+        utils_section.content_layout.addWidget(self.UEexport_btn)
 
         main_layout.addWidget(utils_section)
 
@@ -598,6 +601,7 @@ class TopoAutoRigUI(QtWidgets.QDialog):
         self.save_defaults_btn.clicked.connect(self.save_control_defaults)
         self.load_all_btn.clicked.connect(self.load_all_file)
         self.reload_btn.clicked.connect(self.reload)
+        self.UEexport_btn.clicked.connect(self.UEexport)
 
     # ------------------------------------------------
     # Class Functions
@@ -611,6 +615,13 @@ class TopoAutoRigUI(QtWidgets.QDialog):
         import rjg
 
         show_ui()
+    
+    def UEexport(self):
+        character = self.char_dropdown.currentText().strip()
+        UE_Export.export_rig(
+    export_dir=f"{groups}/dragonkisser/anim/Rig_Exports/{character}",
+    file_name=character
+)
 
 
 
