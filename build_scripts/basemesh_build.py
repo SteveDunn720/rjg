@@ -567,7 +567,7 @@ class TopoAutoRigUI(QtWidgets.QDialog):
         self.save_controls_btn = QtWidgets.QPushButton("Save Out Control Shapes")
         self.save_controls_btn.setToolTip("Saves out the shape of every control in the scene")
         self.save_defaults_btn = QtWidgets.QPushButton("Save Control Defaults")
-        self.save_defaults_btn.setToolTip("Saves out the unique attribute values as defaults for every control in the scene")
+        self.save_defaults_btn.setToolTip("Saves out the custom attribute values as defaults for every control in the scene")
         self.reload_btn = QtWidgets.QPushButton("Reload")
         self.mirror_control_shape_btn = QtWidgets.QPushButton("Mirror Selected Controls")
         self.mirror_control_shape_btn.setToolTip("Expects a selection of controls with either '_R_' or '_L_' then finds the counterpart in the scene and copies the vertex positions over")

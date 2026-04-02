@@ -476,6 +476,8 @@ class Finger(rModule.RigModule, rFk.Fk, rIk.Ik):
                 mc.orientConstraint(f'{self.base_name}_01_fk_CTRL', f'{self.curl_ctrl.top}', mo=True)
                 for num in ['02', '03', '04']:
                     mc.addAttr(f'{self.curl_ctrl.ctrl}', longName=f'rotateFinger{num}', attributeType='double', defaultValue=1.0, k=True)
+                    #expr = f"{self.base_name}_{num}_fk_CTRL_SDK_GRP.rotate{self.curlaxis} = {self.curl_ctrl.ctrl}.rotate{self.curlaxis} * {self.curl_ctrl.ctrl}.rotateFinger{num};"
+                    # mc.expression(s=expr, o="", ae=1, uc="all") # always update, do unit conversion
                     multiply_divide_node = mc.createNode('multiplyDivide', name=f'{self.base_name}_rotateFinger_MD')
                     mc.connectAttr(f'{self.curl_ctrl.ctrl}.rotate{self.curlaxis}',f'{multiply_divide_node}.input1X')
                     mc.connectAttr(f'{self.curl_ctrl.ctrl}.rotateFinger{num}', f'{multiply_divide_node}.input2X')
