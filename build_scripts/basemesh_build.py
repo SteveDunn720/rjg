@@ -14,6 +14,7 @@ import rjg.libs.control.draw as draw
 import rjg.build_scripts.bettercontrols as c
 import rjg.post.character_defaults as char_def
 import rjg.post.UE_Rig_Export as UE_Export
+import rjg.post.mirror_control as mirror_control
 
 import shutil
 
@@ -566,12 +567,14 @@ class TopoAutoRigUI(QtWidgets.QDialog):
         self.save_controls_btn = QtWidgets.QPushButton("Save Out Control Shapes")
         self.save_defaults_btn = QtWidgets.QPushButton("Save Control Defaults")
         self.reload_btn = QtWidgets.QPushButton("Reload")
+        self.mirror_control_shape_btn = QtWidgets.QPushButton("Mirror Selected Controls")
         self.UEexport_btn = QtWidgets.QPushButton("UE Rig Export")
 
         utils_section.content_layout.addWidget(self.flip_guides_btn)
         utils_section.content_layout.addWidget(self.save_controls_btn)
         utils_section.content_layout.addWidget(self.save_defaults_btn)
         utils_section.content_layout.addWidget(self.reload_btn)
+        utils_section.content_layout.addWidget(self.mirror_control_shape_btn)
         utils_section.content_layout.addWidget(self.UEexport_btn)
 
         main_layout.addWidget(utils_section)
@@ -601,11 +604,15 @@ class TopoAutoRigUI(QtWidgets.QDialog):
         self.save_defaults_btn.clicked.connect(self.save_control_defaults)
         self.load_all_btn.clicked.connect(self.load_all_file)
         self.reload_btn.clicked.connect(self.reload)
+        self.mirror_control_shape_btn.clicked.connect(self.mirror_control)
         self.UEexport_btn.clicked.connect(self.UEexport)
 
     # ------------------------------------------------
     # Class Functions
     # ------------------------------------------------
+
+    def mirror_control(self):
+        mirror_control.mirror_selected_curves(axis='x')
 
     def reload(self):
         import sys
