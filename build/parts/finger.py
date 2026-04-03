@@ -474,14 +474,14 @@ class Finger(rModule.RigModule, rFk.Fk, rIk.Ik):
             else:
                 mc.pointConstraint(f'{self.base_name}_02_fk_CTRL', f'{self.curl_ctrl.top}', mo=True)
                 mc.orientConstraint(f'{self.base_name}_01_fk_CTRL', f'{self.curl_ctrl.top}', mo=True)
-                for num in ['02', '03', '04']:
+                multiply_divide_node = mc.createNode('multiplyDivide', name=f'{self.base_name}_rotateFinger_MD') # create one that all of them flow through
+                for num, MDSlot in zip(['02', '03', '04'], ['X', 'Y', 'Z']): #sucker is faster if we just use one MD node
                     mc.addAttr(f'{self.curl_ctrl.ctrl}', longName=f'rotateFinger{num}', attributeType='double', defaultValue=1.0, k=True)
-                    #expr = f"{self.base_name}_{num}_fk_CTRL_SDK_GRP.rotate{self.curlaxis} = {self.curl_ctrl.ctrl}.rotate{self.curlaxis} * {self.curl_ctrl.ctrl}.rotateFinger{num};"
-                    # mc.expression(s=expr, o="", ae=1, uc="all") # always update, do unit conversion
-                    multiply_divide_node = mc.createNode('multiplyDivide', name=f'{self.base_name}_rotateFinger_MD')
-                    mc.connectAttr(f'{self.curl_ctrl.ctrl}.rotate{self.curlaxis}',f'{multiply_divide_node}.input1X')
-                    mc.connectAttr(f'{self.curl_ctrl.ctrl}.rotateFinger{num}', f'{multiply_divide_node}.input2X')
-                    mc.connectAttr(f'{multiply_divide_node}.outputX', f'{self.base_name}_{num}_fk_CTRL_SDK_GRP.rotate{self.curlaxis}')
+                    # expr = f"{self.base_name}_{num}_fk_CTRL_SDK_GRP.rotate{self.curlaxis} = {self.curl_ctrl.ctrl}.rotate{self.curlaxis} * {self.curl_ctrl.ctrl}.rotateFinger{num};"
+                    # mc.expression(s=expr, o="", ae=1, uc="none") # always update, don't do unit conversion a 
+                    mc.connectAttr(f'{self.curl_ctrl.ctrl}.rotate{self.curlaxis}',f'{multiply_divide_node}.input1{MDSlot}')
+                    mc.connectAttr(f'{self.curl_ctrl.ctrl}.rotateFinger{num}', f'{multiply_divide_node}.input2{MDSlot}')
+                    mc.connectAttr(f'{multiply_divide_node}.output{MDSlot}', f'{self.base_name}_{num}_fk_CTRL_SDK_GRP.rotate{self.curlaxis}')
                 for ax in sec_axes:
                     mc.connectAttr(f'{self.curl_ctrl.ctrl}.rotate{ax}', f'{self.base_name}_02_fk_CTRL_SDK_GRP.rotate{ax}')
             if self.expression_control:
