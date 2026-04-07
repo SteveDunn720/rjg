@@ -539,7 +539,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         if character in ['Basemesh', 'CrowdB', 'CrowdA']:
             handshape = 'wrist'
         else:
-            handshape='box'
+            handshape='cube'
             
         # Hand
         if character == 'Bobo':

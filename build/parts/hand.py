@@ -26,7 +26,7 @@ class Hand(rModule.RigModule):
         expression_control=True,
         bendy_visibility: bool | None = None,
         handroll = False,
-        handshape='box'
+        handshape='cube'
     ):
         super().__init__(
             side=side,
