@@ -300,17 +300,17 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
                 eye = UEeye(f'Eye_{side}_guides', ctrl_scale=1, skin=['Eye', 'Cornea',], eyetype='lizzard', socket=False)
                 eye.build()
                 from rjg.build.parts.UEbrow import UEbrow
-                brow = UEbrow(f'Brow_{side}_guides', ctrl_scale=1)
+                brow = UEbrow(f'Brow_{side}_guides', ctrl_scale=1, spline=False)
                 brow.build()
                 from rjg.build.parts.UEcheek import UEcheek
-                cheek = UEcheek(f'Cheek_{side}_guides', ctrl_scale=1, NL=False)
+                cheek = UEcheek(f'Cheek_{side}_guides', ctrl_scale=1, NL=False,spline=False)
                 cheek.build()
 
             from rjg.build.parts.UEjaw import UEjaw
             jaw = UEjaw('Jaw_M_guides', ctrl_scale=1)
             jaw.build()
             from rjg.build.parts.UEmouth import UEmouth
-            mouth = UEmouth('Mouth_guides', ctrl_scale=1, Major_Mouth=5, rib_mouth=10, Major_2=8, cornerhelper=False)
+            mouth = UEmouth('Mouth_guides', ctrl_scale=1, Major_Mouth=5, rib_mouth=10, Major_2=8, cornerhelper=False,spline=False, jawfix=False)
             mouth.build()
             from rjg.build.parts.UEteeth import UEteeth
             teeth = UEteeth('Tongue_M_guides', ctrl_scale=1, skin=['tongue', 'topteeth', 'botteeth'])
