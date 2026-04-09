@@ -56,6 +56,7 @@ def pop_corrective(
 
         
         oreintgrp = mc.group(empty=True, name=f'{tgt_limb}_{pop_descriptor}_Orient_GRP')
+        mc.scaleConstraint('global_M_CTRL', oreintgrp, mo=True)
         mc.parent(oreintLoc, oreintgrp)
 
         mc.setAttr(f'{oreintgrp}.translateX', root_pos[0])
@@ -303,7 +304,7 @@ def build_simple_muscle_chain(
 
         mc.parentConstraint(tgt_limb, top_grp, mo=True)
         mc.connectAttr(f'CorrectiveRigParts.Comp_Vis', f'{top_grp}.visibility')
-        mc.scaleConstraint(tgt_limb,top_grp, mo=True)
+        mc.scaleConstraint('global_M_CTRL',top_grp, mo=True)
     else:
         offset_grp = mc.listRelatives(top_grp, c=True, type='transform')[0]
         created_groups.extend([top_grp, offset_grp])
@@ -490,7 +491,8 @@ def build_simple_muscle_chain(
         bind_jnts.append(j)
 
     try:
-        mc.parent(root_null, control.top, top_grp, mus_grp )
+        mc.parent(root_null, control.top, mus_grp )
+        mc.parent(top_grp, 'CorrectiveRigParts')
     except:
         pass    
 
@@ -505,10 +507,12 @@ def build_simple_muscle_chain(
     mc.connectAttr(f'CorrectiveRigParts.Comp_Vis', f'{ik}.visibility')
     mc.connectAttr(f'CorrectiveRigParts.Comp_Vis', f'{root_null}.visibility')
 
-    mc.scaleConstraint(par_jnt, root_null, mo=True)
+    mc.scaleConstraint(par_jnt, {control.bot}, mo=True)
+
+    #mc.scaleConstraint(par_jnt, root_null, mo=True)
 
     ################ FIX THIS LATER ###########################
-    mc.scaleConstraint(par_jnt, {control.bot}, mo=True)
+    #mc.scaleConstraint(par_jnt, {control.bot}, mo=True)
 
 
     # ============================================================
