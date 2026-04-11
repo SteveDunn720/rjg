@@ -20,7 +20,7 @@ reload(rGuide)
 reload(rXform)
 
 class UEmouth(UEface):
-    def __init__(self, grp_name=None, ctrl_scale=1, Major_Mouth=3, Major_2=None, rib_mouth=0.2, cornerhelper=False, mastercontrol=True, split=False, jawfix=True, spline=False, soft=False):
+    def __init__(self, grp_name=None, ctrl_scale=1, Major_Mouth=3, Major_2=None, rib_mouth=0.2, cornerhelper=False, mastercontrol=True, split=False, jawfix=True, spline=False, soft=False, sticky=True):
         super().__init__(part='Mouth', grp_name=grp_name, ctrl_scale=ctrl_scale,)
         self.Major_Mouth = Major_Mouth
         self.Major_2 = Major_2
@@ -31,6 +31,7 @@ class UEmouth(UEface):
         self.jawfix = jawfix
         self.spline=spline
         self.soft=False
+        self.sticky = sticky
 
     def get_ordered_lip_guides(self, prefix, guides, guide_base, has_mid=True):
         """
@@ -535,4 +536,82 @@ class UEmouth(UEface):
                 mc.parent('Major_Mouth_L_CornerLip_Mouth_CTRL_CNST_GRP', 'Major_Mouth_R_CornerLip_Mouth_CTRL_CNST_GRP', upper_top, masterctrl)
                 mc.connectAttr(f"{masterctrl}.translate", 'LowerLip_M_M_CTRL_OFF_GRP.translate')
                 mc.connectAttr(f"{masterctrl}.rotate", 'LowerLip_M_M_CTRL_OFF_GRP.rotate')
+
+            
+        if self.sticky:
+            print('start_sticky')
+            for side in ['L', 'R']:
+                mc.addAttr(f'Major_Mouth_{side}_CornerLip_Mouth_CTRL', longName=f'{side}_Sticky_Lips', dv=0, k=True, min=0, max=22.5)
+                mc.addAttr('Mouth_M_MasterControl_M_CTRL', longName=f'{side}_Sticky_Lips', proxy=f'Major_Mouth_{side}_CornerLip_Mouth_CTRL.{side}_Sticky_Lips')
+            for i in range(5):
+                num = i + 1
+                if i == 0:
+                    side = ['M']
+                else:
+                    side = ['L', 'R']
+
+                ldv=12.5
+                rdv=12.5
+                for s in side:
+                    mod = 1 if s in ['L', 'M'] else -1
+
+                    upper_pos = mc.xform(f'Mouth_{s}_UpperLip_0{num}_{s}_CTRL',q=True, ws=True, t=True)
+                    lower_pos = mc.xform(f'Mouth_{s}_LowerLip_0{num}_{s}_CTRL',q=True, ws=True, t=True)
+                    mid_pos = [(u + l) / 2 for u, l in zip(upper_pos, lower_pos)]
+
+                    sticky_loc =  mc.spaceLocator(name=f'{s}_0{num}_Sticky_LOC')[0]
+                    mc.xform(sticky_loc, ws=True, t=mid_pos)
+                    mc.parent(sticky_loc, 'Mouth_Extras_offsets')
+                    mc.hide(sticky_loc)
+
+                    r_stick_mult = ldv + num * mod
+                    l_stick_mult = rdv + num * mod * -1
+
+                    r_low_mult = r_stick_mult / 2
+                    l_low_mult = l_stick_mult / 2
+
+                    for thing in ['Upper', 'Lower']:
+                        mc.parentConstraint(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL', sticky_loc, mo=True)
+                        mc.parentConstraint(sticky_loc, f'Mouth_{s}_{thing}Lip_0{num}_JNT', mo=True)
+                        mc.addAttr(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL', longName='L_Sticky_Mod', dv=l_stick_mult, k=True)
+                        mc.addAttr(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL', longName='R_Sticky_Mod', dv=r_stick_mult, k=True)
+                        mc.addAttr(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL', longName='L_Sticky_LOW_Mod', dv=l_low_mult, k=True)
+                        mc.addAttr(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL', longName='R_Sticky_LOW_Mod', dv=r_low_mult, k=True)
+                        
+                        L_Sticky_remap = mc.createNode('remapValue', name = f'{s}_{thing}_0{num}_L_Sticky_remap')
+                        R_Sticky_remap = mc.createNode('remapValue', name = f'{s}_{thing}_0{num}_R_Sticky_remap')
+
+                        mc.connectAttr(f'Major_Mouth_L_CornerLip_Mouth_CTRL.L_Sticky_Lips', f'{L_Sticky_remap}.inputValue')
+                        mc.connectAttr(f'Major_Mouth_R_CornerLip_Mouth_CTRL.R_Sticky_Lips', f'{R_Sticky_remap}.inputValue')
+
+                        mc.connectAttr(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL.L_Sticky_Mod', f'{L_Sticky_remap}.inputMax')
+                        mc.connectAttr(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL.R_Sticky_Mod', f'{R_Sticky_remap}.inputMax')
+                        mc.connectAttr(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL.L_Sticky_LOW_Mod', f'{L_Sticky_remap}.inputMin')
+                        mc.connectAttr(f'Mouth_{s}_{thing}Lip_0{num}_{s}_CTRL.R_Sticky_LOW_Mod', f'{R_Sticky_remap}.inputMin')
+
+                        sticky_clamp = mc.createNode('remapValue', name = f'{s}_{thing}_0{num}_Sticky_clamp')
+                        sticky_ADL = mc.createNode('addDL', name = f'{s}_{thing}_0{num}_Sticky_ADL')
+
+                        mc.connectAttr(f'{L_Sticky_remap}.outValue', f'{sticky_ADL}.input1')
+                        mc.connectAttr(f'{R_Sticky_remap}.outValue', f'{sticky_ADL}.input2')
+
+                        mc.connectAttr(f'{sticky_ADL}.output', f'{sticky_clamp}.inputValue')
+                        mc.setAttr(f'{sticky_clamp}.inputMax', 1)
+                        mc.setAttr(f'{sticky_clamp}.outputMax', 1)
+
+                        sticky_REV = mc.createNode('reverse', name=f'{s}_{thing}_0{num}_Sticky_REV')
+                        mc.connectAttr(f'{sticky_clamp}.outValue' ,f'Mouth_{s}_{thing}Lip_0{num}_JNT_parentConstraint1.{sticky_loc}W1' )
+                        mc.connectAttr(f'{sticky_clamp}.outValue', f'{sticky_REV}.inputX')
+                        mc.connectAttr(f'{sticky_REV}.outputX' ,f'Mouth_{s}_{thing}Lip_0{num}_JNT_parentConstraint1.Mouth_{s}_{thing}Lip_0{num}_{s}_CTRLW0' )
+                            
+
+                            
+
+
+
+
+
+
+                    
+
             
