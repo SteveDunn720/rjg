@@ -1,0 +1,16 @@
+{
+    "controls": {
+        "Eye_L_Upper_Blink_L_CTRL": {
+            "rotateOrder": 0,
+            "blink_mult": -10.0,
+            "blink_mult2": -0.05,
+            "AutoSwivel": -22.2
+        },
+        "Eye_R_Upper_Blink_R_CTRL": {
+            "rotateOrder": 0,
+            "blink_mult": -10.0,
+            "blink_mult2": -0.05,
+            "AutoSwivel": 22.200000000000003
+        }
+    }
+}
