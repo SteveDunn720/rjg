@@ -366,7 +366,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
 
         reload(spline_module)
 
-        splinepart = spline_module.spline()
+        splinepart = spline_module.spline() #Leg_piston_up
 
         for side in ["L", "M", "R"]:
 
@@ -379,6 +379,11 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
                 par_jnt="COG_M_JNT",
                 side=side
             )
+
+        from rjg.build.parts.chef_piston import Build_Piston
+
+        Build_Piston('L')
+
 
 
     for side in ['L', 'R']:
