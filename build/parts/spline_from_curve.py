@@ -123,7 +123,9 @@ class spline():
         split_joints: list[str] = driven_jnts
         mc.addAttr(split_joint, longName="split_joints", dataType="string")
         mc.setAttr(f'{split_joint}.split_joints', repr(split_joints), type="string")
-    
+
+        mc.parent(f'{prefix}_Spline_MatrixSpline_GRP', master_grp)
+        mc.parent(f'{prefix}_driven_TFRM_GRP', master_grp)
 
 
         return {
