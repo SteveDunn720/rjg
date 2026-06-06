@@ -432,7 +432,7 @@ def Build_Piston(side='L'):
         "tgt_limb_pop":'X',
         "tgt_limb_stretch":'Z',
         "tgt_extra":None,
-        "par_jnt":'leg_L_04_JNT',
+        "par_jnt":'leg_L_05_JNT',
         "tgt_name":f'legpiston_l_insert',
         "pop_mult":0,
         "slide_mult":0,
