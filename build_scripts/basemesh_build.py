@@ -628,10 +628,7 @@ class TopoAutoRigUI(QtWidgets.QDialog):
     
     def UEexport(self):
         character = self.char_dropdown.currentText().strip()
-        if character in ['Chef']:
-            root = 'bobo'
-        else:
-            root = 'dragonkisser'
+        root = 'dragonkisser'
         UE_Export.export_rig(
     export_dir=f"{groups}/{root}/anim/Rig_Exports/{character}",
     file_name=character
