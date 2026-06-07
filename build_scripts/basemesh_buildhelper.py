@@ -375,7 +375,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
                 driver_count=2,
                 driven_count=7,
                 prefix=f"Apron_{side}",
-                par_list=[ f"leg_{side}_01_JNT"],
+                par_list=[ "COG_M_JNT", "COG_M_JNT" f"leg_{side}_01_JNT"],
                 par_jnt="COG_M_JNT",
                 side=side
             )
