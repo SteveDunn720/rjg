@@ -368,14 +368,14 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
 
         splinepart = spline_module.spline() #Leg_piston_up
 
-        for side in ["L", "M", "R"]:
+        for side in ["L", "R"]:
 
             result = splinepart.build_spline_from_curve(
                 curve_name=f"Apron_{side}",
                 driver_count=2,
-                driven_count=10,
+                driven_count=7,
                 prefix=f"Apron_{side}",
-                par_list=[ "COG_M_CTRL"],
+                par_list=[ f"leg_{side}_01_JNT"],
                 par_jnt="COG_M_JNT",
                 side=side
             )
