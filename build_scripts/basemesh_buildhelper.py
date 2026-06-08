@@ -161,11 +161,16 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
         joint_num=7,
         split_weights = split_weights
     )
+
+    if mc.objExists('Hat_guide'):
+        hat_guide = 'Hat_guide'
+    else:
+        hat_guide = 'HeadTop_End'
         
 
     neck = rBuild.build_module(module_type='autoneck', side='M', part='neck', guide_list=neckList, ctrl_scale=10, segments=3, )
     head = rBuild.build_module(module_type='head', side='M', part='head', guide_list=['Head'], ctrl_scale=50,  autoneckik=True)
-    hat = rBuild.build_module(module_type='arbitrary', side='M', part='hat', guide_list=['HeadTop_End'], ctrl_scale=10, par_ctrl='head_M_01_CTRL' , par_jnt='head_M_JNT' ,shape='quad_arrow', scale =True)
+    hat = rBuild.build_module(module_type='arbitrary', side='M', part='hat', guide_list=[hat_guide], ctrl_scale=10, par_ctrl='head_M_01_CTRL' , par_jnt='head_M_JNT' ,shape='quad_arrow', scale =True)
 
     #
     if face:
@@ -375,7 +380,7 @@ def run(character, mp=None, gp=None, ep=None, cp=None, sp=None, pp=None, face=Tr
                 driver_count=2,
                 driven_count=7,
                 prefix=f"Apron_{side}",
-                par_list=[ "COG_M_JNT", "COG_M_JNT" f"leg_{side}_01_JNT"],
+                par_list=[ "COG_M_JNT", f"leg_{side}_01_JNT"],
                 par_jnt="COG_M_JNT",
                 side=side
             )
